@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 32px;
+  gap: 12px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #f3f4f6;
+  border-top-color: #ef6c00;
+  border-radius: 50%;
+  animation: rotate 0.9s linear infinite;
+}
+
+.label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,55 @@
+.title {
+  margin: 0 0 16px;
+  font-size: 24px;
+  color: #222;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.name {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.address {
+  margin: 0 0 4px;
+  color: #6b7280;
+}
+
+.phone {
+  margin: 0 0 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.description {
+  margin: 0 0 20px;
+  color: #333;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 24px;
+  background: #fff;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.errorBox {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  color: #b71c1c;
+}

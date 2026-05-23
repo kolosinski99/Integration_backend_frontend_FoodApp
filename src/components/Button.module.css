@@ -1,0 +1,37 @@
+.primary, .secondary {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.primary {
+  background: #ef6c00;
+  color: #fff;
+}
+
+.primary:hover {
+  background: #d65f00;
+}
+
+.primary:disabled,
+.secondary:disabled {
+  background: #d1d5db;
+  color: #6b7280;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background: #fff;
+  color: #ef6c00;
+  border: 1px solid #ef6c00;
+}
+
+.secondary:hover {
+  background: #fff5eb;
+}

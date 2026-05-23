@@ -1,0 +1,42 @@
+package com.foodorder.foodorderapp.auth;
+
+import com.foodorder.foodorderapp.dto.AuthResponse;
+import com.foodorder.foodorderapp.dto.LoginRequest;
+import com.foodorder.foodorderapp.dto.RegisterRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@CrossOrigin
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public AuthResponse register(
+            @RequestBody RegisterRequest request
+    ) {
+
+        return authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(
+            @RequestBody LoginRequest request
+    ) {
+
+        return authService.login(request);
+    }
+
+    @RestController
+    @RequestMapping("/api/test")
+    public class TestController {
+
+        @GetMapping
+        public String test() {
+            return "JWT działa!";
+        }
+    }
+}
