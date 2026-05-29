@@ -28,24 +28,19 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     const response = await loginUser(credentials);
     const data = response.data || {};
-    const newToken = data.token;
-    const name = data.name || data.firstName || data.first_name || '';
+
     const newUser = {
-      login: data.login || data.email || credentials.email || '',
+      login: data.login || credentials.email || '',
       role: data.role || 'USER',
-      name,
+      name: data.name || '',
       surname: data.surname || '',
-      street: data.street || '',
-      houseNumber: data.house_number || data.houseNumber || '',
-      apartmentNumber: data.apartment_number || data.apartmentNumber || null,
-      postalCode: data.postal_code || data.postalCode || '',
-      city: data.city || '',
-      firstName: name,
-      email: data.login || data.email || credentials.email || '',
+      firstName: data.name || '',
+      email: data.login || credentials.email || '',
     };
-    setToken(newToken);
+
+    setToken(data.token);
     setStoredUser(newUser);
-    setTokenState(newToken);
+    setTokenState(data.token);
     setUser(newUser);
     return newUser;
   };

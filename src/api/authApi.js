@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const useMock = process.env.REACT_APP_USE_MOCK_AUTH === 'true';
+const useMock = false;
 
 const MOCK_USERS = [
   {
@@ -118,6 +118,7 @@ export const registerUser = (data) => {
       postal_code: data.postalCode,
       city: data.city,
     },
+    role: 'USER',
   };
   if (useMock) return mockRegister(payload);
   return axiosInstance.post('/auth/register', payload);
