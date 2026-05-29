@@ -13,11 +13,7 @@ public class RegisterRequest {
     private String name;
     private String surname;
 
-    private String street;
-    private String houseNumber;
-    private String apartmentNumber;
-    private String postalCode;
-    private String city;
+    private AddressDto address;
 
     private String role;
 }

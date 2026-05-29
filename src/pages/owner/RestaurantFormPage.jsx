@@ -1,63 +1,87 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   createRestaurant,
   getMyRestaurant,
   updateRestaurant,
 } from '../../api/restaurantApi';
+import { getRestaurantCategories } from '../../api/applicationApi';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Spinner from '../../components/Spinner';
 import { extractApiError } from '../../utils/validators';
 import styles from './RestaurantFormPage.module.css';
 
-const initialForm = {
-  name: '',
-  description: '',
-  address: '',
-  phone: '',
-  imageUrl: '',
+const POSTAL_CODE_REGEX = /^\d{2}-\d{3}$/;
+const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/webp';
+
+const formatPostalCode = (raw) => {
+  const digits = String(raw).replace(/\D/g, '').slice(0, 5);
+  if (digits.length <= 2) return digits;
+  return `${digits.slice(0, 2)}-${digits.slice(2)}`;
 };
 
-const PHONE_REGEX = /^\d{9}$/;
-const URL_REGEX = /^https?:\/\/.+/i;
+const initialForm = {
+  restaurantName: '',
+  description: '',
+  categoryId: '',
+  street: '',
+  houseNumber: '',
+  apartmentNumber: '',
+  postalCode: '',
+  city: '',
+};
 
 const RestaurantFormPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isEditMode = location.pathname.endsWith('/edit');
+  const fileInputRef = useRef(null);
 
   const [form, setForm] = useState(initialForm);
   const [restaurantId, setRestaurantId] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [currentImagePath, setCurrentImagePath] = useState(null);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [apiError, setApiError] = useState('');
-  const [isLoading, setIsLoading] = useState(isEditMode);
+  const [isLoading, setIsLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isEditMode) return undefined;
     let active = true;
-    const loadOwn = async () => {
+    const load = async () => {
       try {
-        const response = await getMyRestaurant();
+        const [categoriesRes] = await Promise.all([getRestaurantCategories()]);
         if (!active) return;
-        const data = response.data || {};
-        setRestaurantId(data.id);
-        setForm({
-          name: data.name || '',
-          description: data.description || '',
-          address: data.address || '',
-          phone: data.phone || '',
-          imageUrl: data.imageUrl || '',
-        });
+        setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
+
+        if (isEditMode) {
+          const response = await getMyRestaurant();
+          if (!active) return;
+          const data = response.data || {};
+          setRestaurantId(data.id_restaurant);
+          setCurrentImagePath(data.image_path || null);
+          setForm({
+            restaurantName: data.restaurant_name || '',
+            description: data.description || '',
+            categoryId: data.restaurant_category_id ? String(data.restaurant_category_id) : '',
+            street: data.street || '',
+            houseNumber: data.house_number || '',
+            apartmentNumber: data.apartment_number || '',
+            postalCode: data.postal_code || '',
+            city: data.city || '',
+          });
+        }
       } catch {
-        if (active) setApiError('Nie udało się załadować danych restauracji.');
+        if (active) setApiError('Nie udało się załadować danych.');
       } finally {
         if (active) setIsLoading(false);
       }
     };
-    loadOwn();
+    load();
     return () => {
       active = false;
     };
@@ -65,21 +89,25 @@ const RestaurantFormPage = () => {
 
   const fieldErrors = useMemo(() => {
     const next = {};
-    if (!form.name.trim()) next.name = 'Nazwa jest wymagana.';
-    else if (form.name.trim().length < 3) next.name = 'Nazwa musi mieć co najmniej 3 znaki.';
+    if (!form.restaurantName.trim()) next.restaurantName = 'Nazwa jest wymagana.';
+    else if (form.restaurantName.trim().length < 3)
+      next.restaurantName = 'Nazwa musi mieć co najmniej 3 znaki.';
 
     if (!form.description.trim()) next.description = 'Opis jest wymagany.';
     else if (form.description.trim().length < 10)
       next.description = 'Opis musi mieć co najmniej 10 znaków.';
 
-    if (!form.address.trim()) next.address = 'Adres jest wymagany.';
+    if (!form.categoryId) next.categoryId = 'Wybierz kategorię.';
 
-    if (!form.phone.trim()) next.phone = 'Telefon jest wymagany.';
-    else if (!PHONE_REGEX.test(form.phone.trim()))
-      next.phone = 'Telefon musi zawierać dokładnie 9 cyfr.';
+    if (!form.street.trim()) next.street = 'Ulica jest wymagana.';
 
-    if (form.imageUrl.trim() && !URL_REGEX.test(form.imageUrl.trim()))
-      next.imageUrl = 'URL musi zaczynać się od http lub https.';
+    if (!form.houseNumber.trim()) next.houseNumber = 'Numer domu jest wymagany.';
+
+    if (!form.postalCode.trim()) next.postalCode = 'Kod pocztowy jest wymagany.';
+    else if (!POSTAL_CODE_REGEX.test(form.postalCode.trim()))
+      next.postalCode = 'Kod pocztowy musi mieć format XX-XXX.';
+
+    if (!form.city.trim()) next.city = 'Miasto jest wymagane.';
 
     return next;
   }, [form]);
@@ -88,7 +116,9 @@ const RestaurantFormPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    let nextValue = value;
+    if (name === 'postalCode') nextValue = formatPostalCode(value);
+    setForm((prev) => ({ ...prev, [name]: nextValue }));
     if (errors[name]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -103,24 +133,38 @@ const RestaurantFormPage = () => {
     setTouched((prev) => ({ ...prev, [e.target.name]: true }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreviewUrl(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreviewUrl(null);
+    }
+  };
+
   const visibleError = (name) =>
     touched[name] || errors[name] ? errors[name] || fieldErrors[name] : undefined;
 
   const isFieldValid = (name) => {
     const value = form[name] || '';
-    if (name === 'imageUrl') return value.trim().length > 0 && !fieldErrors[name];
-    return value.trim().length > 0 && !fieldErrors[name];
+    return value.toString().trim().length > 0 && !fieldErrors[name];
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError('');
     setTouched({
-      name: true,
+      restaurantName: true,
       description: true,
-      address: true,
-      phone: true,
-      imageUrl: true,
+      categoryId: true,
+      street: true,
+      houseNumber: true,
+      apartmentNumber: true,
+      postalCode: true,
+      city: true,
     });
     if (!isFormValid) {
       setErrors(fieldErrors);
@@ -128,21 +172,27 @@ const RestaurantFormPage = () => {
     }
     setSubmitting(true);
     try {
-      const payload = {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        address: form.address.trim(),
-        phone: form.phone.trim(),
-        imageUrl: form.imageUrl.trim(),
-      };
+      const formData = new FormData();
+      formData.append('restaurant_name', form.restaurantName.trim());
+      formData.append('description', form.description.trim());
+      formData.append('restaurant_category_id', form.categoryId);
+      formData.append('street', form.street.trim());
+      formData.append('house_number', form.houseNumber.trim());
+      formData.append('apartment_number', form.apartmentNumber.trim());
+      formData.append('postal_code', form.postalCode.trim());
+      formData.append('city', form.city.trim());
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
       if (isEditMode) {
-        await updateRestaurant(restaurantId, payload);
+        await updateRestaurant(restaurantId, formData);
         navigate('/owner/dashboard', {
           replace: true,
           state: { successMessage: 'Dane restauracji zostały zaktualizowane.' },
         });
       } else {
-        await createRestaurant(payload);
+        await createRestaurant(formData);
         navigate('/owner/dashboard', {
           replace: true,
           state: { successMessage: 'Restauracja została dodana.' },
@@ -155,6 +205,11 @@ const RestaurantFormPage = () => {
     }
   };
 
+  const apiImageUrl =
+    currentImagePath && process.env.REACT_APP_API_URL
+      ? `${process.env.REACT_APP_API_URL}/images/${currentImagePath}`
+      : null;
+
   if (isLoading) return <Spinner />;
 
   return (
@@ -166,12 +221,13 @@ const RestaurantFormPage = () => {
       <form onSubmit={handleSubmit} noValidate>
         <Input
           label="Nazwa restauracji"
-          name="name"
-          value={form.name}
+          name="restaurantName"
+          value={form.restaurantName}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={visibleError('name')}
-          valid={isFieldValid('name')}
+          error={visibleError('restaurantName')}
+          valid={isFieldValid('restaurantName')}
+          maxLength={100}
         />
         <Input
           label="Opis"
@@ -181,36 +237,112 @@ const RestaurantFormPage = () => {
           onBlur={handleBlur}
           error={visibleError('description')}
           valid={isFieldValid('description')}
+          maxLength={500}
         />
+
+        <div className={styles.field}>
+          <label htmlFor="categoryId" className={styles.label}>Kategoria</label>
+          <select
+            id="categoryId"
+            name="categoryId"
+            value={form.categoryId}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <option value="">— wybierz kategorię —</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.categories_name}
+              </option>
+            ))}
+          </select>
+          {visibleError('categoryId') && (
+            <span style={{ fontSize: 12, color: '#b71c1c' }}>{visibleError('categoryId')}</span>
+          )}
+        </div>
+
+        <h2 className={styles.sectionTitle}>Adres</h2>
         <Input
-          label="Adres"
-          name="address"
-          value={form.address}
+          label="Ulica"
+          name="street"
+          value={form.street}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={visibleError('address')}
-          valid={isFieldValid('address')}
+          error={visibleError('street')}
+          valid={isFieldValid('street')}
+          maxLength={45}
+          autoComplete="address-line1"
         />
         <Input
-          label="Telefon"
-          name="phone"
-          inputMode="numeric"
-          value={form.phone}
+          label="Numer domu"
+          name="houseNumber"
+          value={form.houseNumber}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={visibleError('phone')}
-          valid={isFieldValid('phone')}
-          hint="9 cyfr, bez spacji ani prefiksu kraju."
+          error={visibleError('houseNumber')}
+          valid={isFieldValid('houseNumber')}
+          maxLength={45}
         />
         <Input
-          label="URL zdjęcia (opcjonalne)"
-          name="imageUrl"
-          value={form.imageUrl}
+          label="Numer lokalu (opcjonalne)"
+          name="apartmentNumber"
+          value={form.apartmentNumber}
           onChange={handleChange}
           onBlur={handleBlur}
-          error={visibleError('imageUrl')}
-          valid={form.imageUrl.trim() ? isFieldValid('imageUrl') : false}
+          valid={form.apartmentNumber.trim().length > 0}
+          maxLength={45}
         />
+        <Input
+          label="Kod pocztowy"
+          name="postalCode"
+          placeholder="np. 00-001"
+          value={form.postalCode}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={visibleError('postalCode')}
+          valid={isFieldValid('postalCode')}
+          maxLength={6}
+          autoComplete="postal-code"
+        />
+        <Input
+          label="Miasto"
+          name="city"
+          value={form.city}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={visibleError('city')}
+          valid={isFieldValid('city')}
+          maxLength={45}
+          autoComplete="address-level2"
+        />
+
+        <h2 className={styles.sectionTitle}>Zdjęcie</h2>
+        {isEditMode && apiImageUrl && !imagePreviewUrl && (
+          <div className={styles.imagePreviewWrapper}>
+            <p className={styles.imagePreviewLabel}>Aktualne zdjęcie</p>
+            <img src={apiImageUrl} alt="Aktualne zdjęcie restauracji" className={styles.imagePreview} />
+          </div>
+        )}
+        <div className={styles.field}>
+          <label htmlFor="imageFile" className={styles.label}>
+            Zdjęcie restauracji {isEditMode ? '(zostaw puste, by nie zmieniać)' : '(opcjonalne)'}
+          </label>
+          <input
+            id="imageFile"
+            ref={fileInputRef}
+            type="file"
+            accept={ACCEPTED_IMAGE_TYPES}
+            onChange={handleFileChange}
+            className={styles.fileInput}
+          />
+        </div>
+        {imagePreviewUrl && (
+          <div className={styles.imagePreviewWrapper}>
+            <p className={styles.imagePreviewLabel}>Podgląd</p>
+            <img src={imagePreviewUrl} alt="Podgląd zdjęcia" className={styles.imagePreview} />
+          </div>
+        )}
+
         <div className={styles.actions}>
           <Button
             type="submit"

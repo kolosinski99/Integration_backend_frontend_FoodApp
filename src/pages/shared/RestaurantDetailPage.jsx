@@ -5,6 +5,12 @@ import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
 import styles from './RestaurantDetailPage.module.css';
 
+const buildAddressLine = (r) => {
+  const street = [r.street, r.house_number].filter(Boolean).join(' ');
+  const city = [r.postal_code, r.city].filter(Boolean).join(' ');
+  return [street, city].filter(Boolean).join(', ');
+};
+
 const RestaurantDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -61,21 +67,28 @@ const RestaurantDetailPage = () => {
 
   if (!restaurant) return null;
 
+  const imageUrl = restaurant.image_path
+    ? /^https?:\/\//i.test(restaurant.image_path)
+      ? restaurant.image_path
+      : process.env.REACT_APP_API_URL
+      ? `${process.env.REACT_APP_API_URL}/images/${restaurant.image_path}`
+      : null
+    : null;
+
   return (
     <div className={styles.detail}>
       <div className={styles.imageWrapper}>
-        {restaurant.imageUrl ? (
-          <img src={restaurant.imageUrl} alt={restaurant.name} className={styles.image} />
+        {imageUrl ? (
+          <img src={imageUrl} alt={restaurant.restaurant_name} className={styles.image} />
         ) : (
           <div className={styles.placeholder}>Brak zdjęcia</div>
         )}
       </div>
-      <h1 className={styles.name}>{restaurant.name}</h1>
-      <p className={styles.address}>{restaurant.address}</p>
-      <p className={styles.phone}>Tel: {restaurant.phone}</p>
+      <h1 className={styles.name}>{restaurant.restaurant_name}</h1>
+      <p className={styles.address}>{buildAddressLine(restaurant)}</p>
       <p className={styles.description}>{restaurant.description}</p>
       <div className={styles.actions}>
-        <Button onClick={() => navigate(`/restaurants/${restaurant.id}/menu`)}>
+        <Button onClick={() => navigate(`/restaurants/${restaurant.id_restaurant}/menu`)}>
           Zobacz menu
         </Button>
         <Link to="/restaurants" className={styles.backLink}>

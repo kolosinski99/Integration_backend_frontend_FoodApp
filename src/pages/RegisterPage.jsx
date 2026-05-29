@@ -42,6 +42,7 @@ const RegisterPage = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [apiError, setApiError] = useState('');
+  const [errorKind, setErrorKind] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const passwordChecks = useMemo(() => evaluatePassword(form.password), [form.password]);
@@ -97,6 +98,7 @@ const RegisterPage = () => {
       });
     }
     if (apiError) setApiError('');
+    if (errorKind) setErrorKind(null);
   };
 
   const handleBlur = (e) => {
@@ -115,6 +117,7 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError('');
+    setErrorKind(null);
     setTouched(
       Object.keys(initialForm).reduce((acc, key) => ({ ...acc, [key]: true }), {})
     );
@@ -140,7 +143,16 @@ const RegisterPage = () => {
         state: { successMessage: 'Konto zostało utworzone. Możesz się zalogować.' },
       });
     } catch (err) {
-      setApiError(extractApiError(err, 'Rejestracja nie powiodła się.'));
+      const status = err?.response?.status;
+      const message = err?.response?.data?.message || '';
+      const looksLikeDuplicate =
+        status === 409 || /already exists|już istnieje|duplicate/i.test(message);
+      if (looksLikeDuplicate) {
+        setErrorKind('duplicate_email');
+      } else {
+        setErrorKind('generic');
+        setApiError(extractApiError(err, 'Rejestracja nie powiodła się.'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +161,16 @@ const RegisterPage = () => {
   return (
     <div className={styles.card}>
       <h1 className={styles.title}>Rejestracja</h1>
-      {apiError && <div className={styles.alertError}>{apiError}</div>}
+      {errorKind === 'duplicate_email' && (
+        <div className={styles.alertError}>
+          Konto z tym adresem email już istnieje.{' '}
+          <Link to="/login" className={styles.alertLink}>Zaloguj się</Link>{' '}
+          lub użyj innego adresu.
+        </div>
+      )}
+      {errorKind === 'generic' && apiError && (
+        <div className={styles.alertError}>{apiError}</div>
+      )}
       <form onSubmit={handleSubmit} noValidate>
         <Input
           label="Imię"

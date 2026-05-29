@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "roles")
 @Getter
 @Setter
 public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user_role")
+    @Column(name = "id_role")
     private Integer id;
 
     @Column(name = "role_name")

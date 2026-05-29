@@ -61,6 +61,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUser = (updatedFields) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updatedFields };
+      if (updatedFields.name !== undefined) next.firstName = updatedFields.name;
+      setStoredUser(next);
+      return next;
+    });
+  };
+
   const value = {
     user,
     token,
@@ -69,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

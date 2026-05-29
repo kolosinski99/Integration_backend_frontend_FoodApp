@@ -23,6 +23,16 @@
   font-size: 14px;
 }
 
+.alertLink {
+  color: #b71c1c;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.alertLink:hover {
+  color: #7f0000;
+}
+
 .alertSuccess {
   background: #e8f5e9;
   color: #1b5e20;

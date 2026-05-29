@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "clients")
 @Getter
@@ -23,16 +25,11 @@ public class Client {
 
     private String surname;
 
-    private String street;
-
-    @Column(name = "house_number")
-    private String houseNumber;
-
-    @Column(name = "apartment_number")
-    private String apartmentNumber;
-
-    @Column(name = "postal_code")
-    private String postalCode;
-
-    private String city;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "clients_addresses",
+            joinColumns = @JoinColumn(name = "client_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    private List<Address> addresses;
 }

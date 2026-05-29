@@ -18,7 +18,10 @@ const RestaurantListPage = () => {
     setError(null);
     try {
       const response = await getRestaurants();
-      setRestaurants(Array.isArray(response.data) ? response.data : []);
+      const all = Array.isArray(response.data) ? response.data : [];
+      // Backend powinien zwracać tylko is_approved = 1 dla roli USER.
+      // Filtr po stronie frontendu jako zabezpieczenie dodatkowe.
+      setRestaurants(all.filter((r) => r.is_approved === 1));
     } catch {
       setError('Nie udało się załadować restauracji. Spróbuj ponownie.');
     } finally {
@@ -34,9 +37,10 @@ const RestaurantListPage = () => {
     const phrase = search.trim().toLowerCase();
     if (!phrase) return restaurants;
     return restaurants.filter((r) => {
-      const name = (r.name || '').toLowerCase();
-      const address = (r.address || '').toLowerCase();
-      return name.includes(phrase) || address.includes(phrase);
+      const name = (r.restaurant_name || '').toLowerCase();
+      const city = (r.city || '').toLowerCase();
+      const street = (r.street || '').toLowerCase();
+      return name.includes(phrase) || city.includes(phrase) || street.includes(phrase);
     });
   }, [restaurants, search]);
 
@@ -69,9 +73,9 @@ const RestaurantListPage = () => {
         <div className={styles.grid}>
           {filtered.map((restaurant) => (
             <RestaurantCard
-              key={restaurant.id}
+              key={restaurant.id_restaurant}
               restaurant={restaurant}
-              onClick={() => navigate(`/restaurants/${restaurant.id}`)}
+              onClick={() => navigate(`/restaurants/${restaurant.id_restaurant}`)}
             />
           ))}
         </div>

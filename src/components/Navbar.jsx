@@ -15,6 +15,9 @@ const Navbar = () => {
   const navLinkClass = ({ isActive }) =>
     `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`;
 
+  const partnerLinkClass = ({ isActive }) =>
+    `${styles.partnerLink} ${isActive ? styles.partnerLinkActive : ''}`;
+
   return (
     <nav className={styles.navbar}>
       <Link to="/" className={styles.logo}>FoodOrder</Link>
@@ -27,9 +30,14 @@ const Navbar = () => {
               </NavLink>
             )}
             {user?.role === 'OWNER' && (
-              <NavLink to="/owner/dashboard" className={navLinkClass}>
-                Mój panel
-              </NavLink>
+              <>
+                <NavLink to="/owner/dashboard" className={navLinkClass}>
+                  Mój panel
+                </NavLink>
+                <NavLink to="/owner/menu" className={navLinkClass}>
+                  Menu
+                </NavLink>
+              </>
             )}
             {user?.role === 'ADMIN' && (
               <NavLink to="/admin/dashboard" className={navLinkClass}>
@@ -38,11 +46,22 @@ const Navbar = () => {
             )}
           </div>
         )}
+        {!isAuthenticated && (
+          <NavLink to="/partner-application" className={partnerLinkClass}>
+            Działaj z nami
+          </NavLink>
+        )}
         {isAuthenticated ? (
           <>
-            <span className={styles.greeting}>
-              {user?.firstName || user?.email} {user?.role && <em>({user.role})</em>}
-            </span>
+            <Link to="/profile" className={styles.greeting}>
+              {user?.role === 'OWNER' && (
+                <span className={styles.roleLabel}>Właściciel/ka </span>
+              )}
+              {user?.role === 'ADMIN' && (
+                <span className={styles.roleLabel}>Administrator/ka </span>
+              )}
+              {user?.firstName || user?.email}
+            </Link>
             <button className={styles.button} onClick={handleLogout}>
               Wyloguj
             </button>

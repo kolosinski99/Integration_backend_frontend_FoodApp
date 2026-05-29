@@ -46,8 +46,50 @@
   font-weight: 600;
 }
 
+.partnerLink {
+  display: inline-block;
+  padding: 7px 14px;
+  border: 2px solid #ef6c00;
+  border-radius: 999px;
+  color: #ef6c00;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.partnerLink:hover {
+  background: #ef6c00;
+  color: #fff;
+  text-decoration: none;
+}
+
+.partnerLinkActive {
+  background: #ef6c00;
+  color: #fff;
+}
+
 .greeting {
   color: #444;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.greeting:hover {
+  color: #ef6c00;
+  background: #fff5eb;
+  text-decoration: none;
+}
+
+.roleLabel {
+  color: #ef6c00;
+  font-weight: 600;
+  margin-right: 4px;
 }
 
 .greeting em {

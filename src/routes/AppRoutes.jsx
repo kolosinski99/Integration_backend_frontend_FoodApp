@@ -5,10 +5,14 @@ import RegisterPage from '../pages/RegisterPage';
 import HomePage from '../pages/HomePage';
 import RestaurantListPage from '../pages/client/RestaurantListPage';
 import RestaurantDetailPage from '../pages/shared/RestaurantDetailPage';
-import MenuPlaceholderPage from '../pages/shared/MenuPlaceholderPage';
+import MenuPage from '../pages/shared/MenuPage';
+import ProfilePage from '../pages/shared/ProfilePage';
 import OwnerDashboardPage from '../pages/owner/OwnerDashboardPage';
 import RestaurantFormPage from '../pages/owner/RestaurantFormPage';
+import MenuManagementPage from '../pages/owner/MenuManagementPage';
+import MenuItemFormPage from '../pages/owner/MenuItemFormPage';
 import AdminDashboardPlaceholder from '../pages/admin/AdminDashboardPlaceholder';
+import PartnerApplicationPage from '../pages/public/PartnerApplicationPage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,11 +27,20 @@ const AppRoutes = () => (
     <Route path="/" element={<RootRedirect />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
+    <Route path="/partner-application" element={<PartnerApplicationPage />} />
     <Route
       path="/home"
       element={
         <ProtectedRoute>
           <HomePage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/profile"
+      element={
+        <ProtectedRoute allowedRoles={['USER', 'OWNER']}>
+          <ProfilePage />
         </ProtectedRoute>
       }
     />
@@ -51,7 +64,7 @@ const AppRoutes = () => (
       path="/restaurants/:id/menu"
       element={
         <ProtectedRoute allowedRoles={['USER', 'OWNER']}>
-          <MenuPlaceholderPage />
+          <MenuPage />
         </ProtectedRoute>
       }
     />
@@ -76,6 +89,30 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={['OWNER']}>
           <RestaurantFormPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/owner/menu"
+      element={
+        <ProtectedRoute allowedRoles={['OWNER']}>
+          <MenuManagementPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/owner/menu/new"
+      element={
+        <ProtectedRoute allowedRoles={['OWNER']}>
+          <MenuItemFormPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/owner/menu/edit/:id"
+      element={
+        <ProtectedRoute allowedRoles={['OWNER']}>
+          <MenuItemFormPage />
         </ProtectedRoute>
       }
     />

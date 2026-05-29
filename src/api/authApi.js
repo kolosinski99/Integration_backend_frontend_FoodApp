@@ -41,6 +41,9 @@ const MOCK_USERS = [
   },
 ];
 
+// Login response includes flat address fields so AuthContext can read them without changes.
+// Register payload wraps address in a nested object per DB schema (clients + addresses tables).
+
 const buildLoginPayload = (user) => ({
   token: 'fake-jwt-token',
   role: user.role,
@@ -73,17 +76,12 @@ const mockLogin = (credentials) =>
 const mockRegister = (payload) =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
-      const required = [
-        'login',
-        'password',
-        'name',
-        'surname',
-        'street',
-        'house_number',
-        'postal_code',
-        'city',
-      ];
-      const missing = required.some((key) => !payload[key]);
+      const addr = payload.address || {};
+      const rootRequired = ['login', 'password', 'name', 'surname'];
+      const addrRequired = ['street', 'house_number', 'postal_code', 'city'];
+      const missing =
+        rootRequired.some((key) => !payload[key]) ||
+        addrRequired.some((key) => !addr[key]);
       if (missing) {
         reject({ response: { status: 400, data: { message: 'Brak wymaganych pól.' } } });
         return;
@@ -100,10 +98,11 @@ const mockRegister = (payload) =>
 
 export const loginUser = (credentials) => {
   if (useMock) return mockLogin(credentials);
-  return axiosInstance.post('/auth/login', {
-    login: credentials.email,
+  const payload = {
+    login: credentials.login || credentials.email,
     password: credentials.password,
-  });
+  };
+  return axiosInstance.post('/auth/login', payload);
 };
 
 export const registerUser = (data) => {
@@ -112,11 +111,13 @@ export const registerUser = (data) => {
     password: data.password,
     name: data.name,
     surname: data.surname,
-    street: data.street,
-    houseNumber: data.houseNumber,
-    apartmentNumber: data.apartmentNumber ? data.apartmentNumber : null,
-    postalCode: data.postalCode,
-    city: data.city,
+    address: {
+      street: data.street,
+      house_number: data.houseNumber,
+      apartment_number: data.apartmentNumber ? data.apartmentNumber : null,
+      postal_code: data.postalCode,
+      city: data.city,
+    },
   };
   if (useMock) return mockRegister(payload);
   return axiosInstance.post('/auth/register', payload);

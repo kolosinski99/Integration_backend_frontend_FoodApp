@@ -12,7 +12,7 @@ public class AccountStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_account_statuses")
+    @Column(name = "id_account_status")
     private Integer id;
 
     @Column(name = "status_name")
