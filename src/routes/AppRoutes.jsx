@@ -11,8 +11,11 @@ import OwnerDashboardPage from '../pages/owner/OwnerDashboardPage';
 import RestaurantFormPage from '../pages/owner/RestaurantFormPage';
 import MenuManagementPage from '../pages/owner/MenuManagementPage';
 import MenuItemFormPage from '../pages/owner/MenuItemFormPage';
-import AdminDashboardPlaceholder from '../pages/admin/AdminDashboardPlaceholder';
+import OwnerOrdersPage from '../pages/owner/OwnerOrdersPage';
+import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import PartnerApplicationPage from '../pages/public/PartnerApplicationPage';
+import CartPage from '../pages/client/CartPage';
+import OrderHistoryPage from '../pages/client/OrderHistoryPage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 
@@ -49,6 +52,22 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={['USER']}>
           <RestaurantListPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/cart"
+      element={
+        <ProtectedRoute allowedRoles={['USER']}>
+          <CartPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/orders"
+      element={
+        <ProtectedRoute allowedRoles={['USER']}>
+          <OrderHistoryPage />
         </ProtectedRoute>
       }
     />
@@ -117,10 +136,18 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/owner/orders"
+      element={
+        <ProtectedRoute allowedRoles={['OWNER']}>
+          <OwnerOrdersPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path="/admin/dashboard"
       element={
         <ProtectedRoute allowedRoles={['ADMIN']}>
-          <AdminDashboardPlaceholder />
+          <AdminDashboardPage />
         </ProtectedRoute>
       }
     />

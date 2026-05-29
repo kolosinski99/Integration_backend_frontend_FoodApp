@@ -1,0 +1,131 @@
+.title {
+  margin: 0 0 20px;
+  font-size: 26px;
+  color: #222;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.orderNumber {
+  font-weight: 700;
+  color: #222;
+  margin-right: 10px;
+}
+
+.restaurant {
+  color: #555;
+}
+
+.date {
+  font-size: 13px;
+  color: #888;
+  margin: 4px 0 12px;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+.statusNew {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.statusProgress {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.statusCompleted {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.statusCancelled {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.items {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.items li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #444;
+}
+
+.comment {
+  font-size: 13px;
+  color: #777;
+  font-style: italic;
+  margin: 0 0 10px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 10px;
+  font-weight: 600;
+  color: #222;
+}
+
+.total {
+  font-size: 18px;
+  color: #ef6c00;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 24px;
+  background: #fff;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.errorBox {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  color: #b71c1c;
+}

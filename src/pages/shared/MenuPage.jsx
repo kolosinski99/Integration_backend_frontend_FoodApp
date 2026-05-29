@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getMenuByRestaurant, getMenuCategories } from '../../api/menuApi';
 import { getRestaurantById } from '../../api/restaurantApi';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import MenuItemCard from '../../components/MenuItemCard';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
@@ -9,6 +11,9 @@ import styles from './MenuPage.module.css';
 
 const MenuPage = () => {
   const { id } = useParams();
+  const { user } = useAuth();
+  const { addItem } = useCart();
+  const canOrder = user?.role === 'USER';
 
   const [restaurant, setRestaurant] = useState(null);
   const [items, setItems] = useState([]);
@@ -93,7 +98,16 @@ const MenuPage = () => {
                 <MenuItemCard
                   key={item.id_menu_product}
                   menuItem={item}
-                  onAddToCart={() => {}}
+                  onAddToCart={
+                    canOrder
+                      ? (menuItem) =>
+                          addItem(
+                            menuItem,
+                            restaurant.id_restaurant,
+                            restaurant.restaurant_name
+                          )
+                      : undefined
+                  }
                 />
               ))}
             </div>

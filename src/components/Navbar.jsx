@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { itemCount } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,9 +27,18 @@ const Navbar = () => {
         {isAuthenticated && (
           <div className={styles.links}>
             {user?.role === 'USER' && (
-              <NavLink to="/restaurants" className={navLinkClass}>
-                Restauracje
-              </NavLink>
+              <>
+                <NavLink to="/restaurants" className={navLinkClass}>
+                  Restauracje
+                </NavLink>
+                <NavLink to="/orders" className={navLinkClass}>
+                  Moje zamówienia
+                </NavLink>
+                <NavLink to="/cart" className={navLinkClass}>
+                  Koszyk
+                  {itemCount > 0 && <span className={styles.cartBadge}>{itemCount}</span>}
+                </NavLink>
+              </>
             )}
             {user?.role === 'OWNER' && (
               <>
@@ -36,6 +47,9 @@ const Navbar = () => {
                 </NavLink>
                 <NavLink to="/owner/menu" className={navLinkClass}>
                   Menu
+                </NavLink>
+                <NavLink to="/owner/orders" className={navLinkClass}>
+                  Zamówienia
                 </NavLink>
               </>
             )}
