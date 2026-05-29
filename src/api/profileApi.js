@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const useMock = process.env.REACT_APP_USE_MOCK_DATA === 'true';
+const useMock = true;
 
 const mockProfileStore = {
   profile: {

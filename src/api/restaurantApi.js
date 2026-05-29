@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const useMock = false;
+const useMock = true;
 
 const seedRestaurants = [
   {

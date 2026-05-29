@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-const useMock = false;
+const useMock = true;
 
 const CATEGORIES = [
   { id: 1, category_name: 'Przystawki' },
