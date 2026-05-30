@@ -107,6 +107,12 @@ const OwnerDashboardPage = () => {
           <Button onClick={() => navigate('/owner/restaurant/edit')}>
             Edytuj dane restauracji
           </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/owner/orders')}
+          >
+            Zamówienia
+          </Button>
         </div>
       )}
     </div>

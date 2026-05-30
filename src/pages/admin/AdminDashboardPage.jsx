@@ -88,7 +88,7 @@ const AdminDashboardPage = () => {
           className={`${styles.tab} ${activeTab === 'pending' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('pending')}
         >
-          Oczekujące ({pending.length})
+          Oczekujące na zatwierdzenie ({pending.length})
         </button>
         <button
           type="button"
@@ -102,7 +102,7 @@ const AdminDashboardPage = () => {
       {list.length === 0 ? (
         <p className={styles.empty}>
           {activeTab === 'pending'
-            ? 'Brak restauracji oczekujących na zatwierdzenie.'
+            ? 'Brak restauracji oczekujących na zatwierdzenie. Wszystko sprawdzone!'
             : 'Brak zatwierdzonych restauracji.'}
         </p>
       ) : (

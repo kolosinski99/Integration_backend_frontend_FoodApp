@@ -9,7 +9,7 @@ import styles from './OrderHistoryPage.module.css';
 
 const STATUS_META = {
   NEW: { label: 'Nowe', className: 'statusNew' },
-  IN_PROGRESS: { label: 'W realizacji', className: 'statusProgress' },
+  IN_PROGRESS: { label: 'W trakcie realizacji', className: 'statusProgress' },
   COMPLETED: { label: 'Zrealizowane', className: 'statusCompleted' },
   CANCELLED: { label: 'Anulowane', className: 'statusCancelled' },
 };

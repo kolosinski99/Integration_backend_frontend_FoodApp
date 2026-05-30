@@ -34,6 +34,7 @@ const CartPage = () => {
     isEmpty,
     updateQuantity,
     removeItem,
+    clearCart,
   } = useCart();
 
   const savedAddresses = Array.isArray(user?.addresses) ? user.addresses : [];
@@ -113,6 +114,7 @@ const CartPage = () => {
         client_comment: comment.trim() ? comment.trim() : null,
       };
       await createOrder(payload);
+      clearCart();
       navigate('/orders', {
         replace: true,
         state: { successMessage: 'Zamówienie zostało złożone!' },
@@ -205,7 +207,7 @@ const CartPage = () => {
           </ul>
 
           <div className={styles.totalRow}>
-            <span>Razem</span>
+            <span>Do zapłaty</span>
             <span className={styles.totalPrice}>{formatPrice(totalPrice)}</span>
           </div>
 
