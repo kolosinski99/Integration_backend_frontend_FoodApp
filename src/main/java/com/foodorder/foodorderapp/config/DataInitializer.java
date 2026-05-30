@@ -25,6 +25,8 @@ public class DataInitializer implements CommandLineRunner {
     private final RestaurantCategoryRepository restaurantCategoryRepository;
     private final MenuProductRepository menuProductRepository;
     private final MenuProductCategoryRepository menuProductCategoryRepository;
+    private final OrderStatusRepository orderStatusRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -35,6 +37,58 @@ public class DataInitializer implements CommandLineRunner {
         if (owner != null) {
             seedOwnerRestaurantAndMenu(owner);
         }
+        seedOrderStatuses();
+        seedPaymentMethods();
+        seedTestUsers();
+    }
+
+    private void seedOrderStatuses() {
+        if (orderStatusRepository.count() > 0) return;
+        List<String[]> statuses = List.of(
+                new String[]{"NEW", "Nowe zamówienie"},
+                new String[]{"IN_PROGRESS", "W realizacji"},
+                new String[]{"COMPLETED", "Zrealizowane"},
+                new String[]{"CANCELLED", "Anulowane"}
+        );
+        for (String[] s : statuses) {
+            OrderStatus os = new OrderStatus();
+            os.setStatusName(s[0]);
+            os.setStatusDescription(s[1]);
+            orderStatusRepository.save(os);
+        }
+    }
+
+    private void seedPaymentMethods() {
+        if (paymentMethodRepository.count() > 0) return;
+        List<String[]> methods = List.of(
+                new String[]{"CASH", "Płatność gotówką przy odbiorze"},
+                new String[]{"CARD", "Płatność kartą przy odbiorze"},
+                new String[]{"ONLINE", "Płatność online"}
+        );
+        for (String[] m : methods) {
+            PaymentMethod pm = new PaymentMethod();
+            pm.setMethodName(m[0]);
+            pm.setMethodDescription(m[1]);
+            paymentMethodRepository.save(pm);
+        }
+    }
+
+    private void seedTestUsers() {
+        seedUser("user@test.com", "User1234", 1);
+        seedUser("admin@test.com", "Admin1234", 3);
+    }
+
+    private void seedUser(String login, String password, int roleId) {
+        if (userRepository.existsByLogin(login)) return;
+        UserRole role = userRoleRepository.findById(roleId).orElseThrow();
+        AccountStatus active = accountStatusRepository.findById(1).orElseThrow();
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRoles(List.of(role));
+        user.setAccountStatus(active);
+        user.setCreateAccountDate(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     private void seedRestaurantCategories() {

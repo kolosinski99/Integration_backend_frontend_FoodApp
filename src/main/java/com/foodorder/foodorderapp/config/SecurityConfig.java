@@ -74,6 +74,14 @@ public class SecurityConfig {
                                 "/api/restaurants"
                         ).permitAll()
 
+                        .requestMatchers(
+                                "/api/orders/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/admin/**"
+                        ).authenticated()
+
                         .anyRequest()
                         .authenticated()
                 )
