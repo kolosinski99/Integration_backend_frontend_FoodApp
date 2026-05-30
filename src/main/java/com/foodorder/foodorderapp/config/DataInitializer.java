@@ -74,12 +74,30 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedTestUsers() {
-        seedUser("user@test.com", "User1234", 1);
+        User testUser = seedUser("user@test.com", "User1234", 1);
+        if (testUser != null && clientRepository.findByUser(testUser).isEmpty()) {
+            Address address = new Address();
+            address.setStreet("ul. Testowa");
+            address.setHouseNumber("5");
+            address.setApartmentNumber("3");
+            address.setPostalCode("00-100");
+            address.setCity("Warszawa");
+            Address savedAddress = addressRepository.save(address);
+
+            Client client = new Client();
+            client.setUser(testUser);
+            client.setName("Jan");
+            client.setSurname("Testowy");
+            client.setAddresses(List.of(savedAddress));
+            clientRepository.save(client);
+        }
         seedUser("admin@test.com", "Admin1234", 3);
     }
 
-    private void seedUser(String login, String password, int roleId) {
-        if (userRepository.existsByLogin(login)) return;
+    private User seedUser(String login, String password, int roleId) {
+        if (userRepository.existsByLogin(login)) {
+            return userRepository.findByLogin(login).orElse(null);
+        }
         UserRole role = userRoleRepository.findById(roleId).orElseThrow();
         AccountStatus active = accountStatusRepository.findById(1).orElseThrow();
         User user = new User();
@@ -88,7 +106,7 @@ public class DataInitializer implements CommandLineRunner {
         user.setRoles(List.of(role));
         user.setAccountStatus(active);
         user.setCreateAccountDate(LocalDateTime.now());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     private void seedRestaurantCategories() {
