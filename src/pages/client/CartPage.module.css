@@ -237,3 +237,31 @@
   width: 100%;
   margin-top: 16px;
 }
+
+.mapToggleButton {
+  width: 100%;
+  padding: 9px 14px;
+  background: #fff5eb;
+  border: 1.5px dashed #ef6c00;
+  border-radius: 6px;
+  color: #ef6c00;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  text-align: center;
+  transition: background 0.15s ease;
+}
+
+.mapToggleButton:hover {
+  background: #ffe0c2;
+}
+
+.mapSelectedInfo {
+  font-size: 12px;
+  color: #639922;
+  background: #f0f8e8;
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}

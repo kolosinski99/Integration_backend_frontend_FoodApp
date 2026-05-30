@@ -16,6 +16,9 @@ public class CreateOrderRequest {
     @JsonProperty("address_id")
     private Integer addressId;
 
+    @JsonProperty("new_address")
+    private NewAddressDto newAddress;
+
     @JsonProperty("payment_method_id")
     private Integer paymentMethodId;
 

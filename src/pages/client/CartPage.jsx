@@ -4,6 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { createOrder, getPaymentMethods } from '../../api/orderApi';
 import Button from '../../components/Button';
+import MapPicker from '../../components/MapPicker';
 import { formatPrice } from '../../utils/format';
 import styles from './CartPage.module.css';
 
@@ -55,6 +56,8 @@ const CartPage = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [showMap, setShowMap] = useState(false);
+  const [mapCoords, setMapCoords] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -95,17 +98,49 @@ const CartPage = () => {
     setAddressForm((prev) => ({ ...prev, [name]: nextValue }));
   };
 
+  const handleMapAddressSelected = (parsed) => {
+    setAddressForm({
+      street: parsed.street || '',
+      houseNumber: parsed.houseNumber || '',
+      apartmentNumber: parsed.apartmentNumber || '',
+      postalCode: parsed.postalCode || '',
+      city: parsed.city || '',
+    });
+    setMapCoords(
+      parsed.lat != null
+        ? { lat: parsed.lat, lon: parsed.lon }
+        : null
+    );
+  };
+
   const handleSubmit = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
     setApiError('');
     try {
-      // address_id: placeholder do zastąpienia po integracji z backendem adresów
-      const addressId = hasSavedAddresses ? Number(selectedAddressId) : 1;
+      let orderAddress;
+      if (hasSavedAddresses) {
+        orderAddress = {
+          address_id: Number(selectedAddressId),
+        };
+      } else {
+        orderAddress = {
+          new_address: {
+            street: addressForm.street.trim(),
+            house_number: addressForm.houseNumber.trim(),
+            apartment_number: addressForm.apartmentNumber.trim() || null,
+            postal_code: addressForm.postalCode.trim(),
+            city: addressForm.city.trim(),
+            lat: mapCoords?.lat ?? null,
+            lon: mapCoords?.lon ?? null,
+          },
+        };
+      }
+
       const payload = {
         restaurant_id: restaurantId,
         restaurant_name: restaurantName,
-        address_id: addressId,
+        ...orderAddress,
         payment_method_id: Number(paymentMethodId),
         items: items.map((i) => ({
           menu_product_id: i.menuProductId,
@@ -257,15 +292,31 @@ const CartPage = () => {
               ))}
             </select>
           ) : (
-            <div className={styles.addressForm}>
-              <input
-                className={styles.input}
-                name="street"
-                placeholder="Ulica"
-                value={addressForm.street}
-                onChange={handleAddressChange}
-              />
-              {addressErrors.street && <span className={styles.error}>{addressErrors.street}</span>}
+            <>
+              <button
+                type="button"
+                className={styles.mapToggleButton}
+                onClick={() => setShowMap(true)}
+              >
+                📍 Wybierz adres na mapie
+              </button>
+
+              {mapCoords && (
+                <p className={styles.mapSelectedInfo}>
+                  Współrzędne: {mapCoords.lat.toFixed(4)}, {mapCoords.lon.toFixed(4)}
+                  {' — możesz poprawić adres poniżej'}
+                </p>
+              )}
+
+              <div className={styles.addressForm}>
+                <input
+                  className={styles.input}
+                  name="street"
+                  placeholder="Ulica"
+                  value={addressForm.street}
+                  onChange={handleAddressChange}
+                />
+                {addressErrors.street && <span className={styles.error}>{addressErrors.street}</span>}
 
               <div className={styles.inlineFields}>
                 <input
@@ -299,15 +350,23 @@ const CartPage = () => {
                 <span className={styles.error}>{addressErrors.postalCode}</span>
               )}
 
-              <input
-                className={styles.input}
-                name="city"
-                placeholder="Miasto"
-                value={addressForm.city}
-                onChange={handleAddressChange}
-              />
-              {addressErrors.city && <span className={styles.error}>{addressErrors.city}</span>}
-            </div>
+                <input
+                  className={styles.input}
+                  name="city"
+                  placeholder="Miasto"
+                  value={addressForm.city}
+                  onChange={handleAddressChange}
+                />
+                {addressErrors.city && <span className={styles.error}>{addressErrors.city}</span>}
+              </div>
+            </>
+          )}
+
+          {showMap && (
+            <MapPicker
+              onAddressSelected={handleMapAddressSelected}
+              onClose={() => setShowMap(false)}
+            />
           )}
 
           {apiError && <div className={styles.apiError}>{apiError}</div>}

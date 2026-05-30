@@ -1,6 +1,7 @@
 package com.foodorder.foodorderapp.service;
 
 import com.foodorder.foodorderapp.dto.CreateOrderRequest;
+import com.foodorder.foodorderapp.dto.NewAddressDto;
 import com.foodorder.foodorderapp.dto.OrderDto;
 import com.foodorder.foodorderapp.dto.OrderItemDto;
 import com.foodorder.foodorderapp.dto.OrderItemRequest;
@@ -46,10 +47,32 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Restauracja nie istnieje"));
 
-        Address address = addressRepository
-                .findById(request.getAddressId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Adres nie istnieje"));
+        Address address;
+
+        if (request.getNewAddress() != null) {
+            NewAddressDto dto = request.getNewAddress();
+            Address newAddr = new Address();
+            newAddr.setStreet(dto.getStreet() != null ? dto.getStreet() : "");
+            newAddr.setHouseNumber(dto.getHouseNumber() != null ? dto.getHouseNumber() : "");
+            newAddr.setApartmentNumber(dto.getApartmentNumber());
+            newAddr.setPostalCode(dto.getPostalCode() != null ? dto.getPostalCode() : "");
+            newAddr.setCity(dto.getCity() != null ? dto.getCity() : "");
+            address = addressRepository.save(newAddr);
+
+            if (client.getAddresses() != null && !client.getAddresses().contains(address)) {
+                client.getAddresses().add(address);
+                clientRepository.save(client);
+            }
+        } else if (request.getAddressId() != null) {
+            address = addressRepository
+                    .findById(request.getAddressId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Adres nie istnieje"));
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Brak adresu dostawy — podaj address_id lub new_address");
+        }
 
         PaymentMethod paymentMethod = paymentMethodRepository
                 .findById(request.getPaymentMethodId())
