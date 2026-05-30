@@ -252,7 +252,7 @@ const RestaurantFormPage = () => {
             <option value="">— wybierz kategorię —</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.categories_name}
+                {c.category_name}
               </option>
             ))}
           </select>

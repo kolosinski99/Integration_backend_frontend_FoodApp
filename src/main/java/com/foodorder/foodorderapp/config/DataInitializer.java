@@ -82,13 +82,12 @@ public class DataInitializer implements CommandLineRunner {
             address.setApartmentNumber("3");
             address.setPostalCode("00-100");
             address.setCity("Warszawa");
-            Address savedAddress = addressRepository.save(address);
 
             Client client = new Client();
             client.setUser(testUser);
             client.setName("Jan");
             client.setSurname("Testowy");
-            client.setAddresses(List.of(savedAddress));
+            client.setAddresses(List.of(address));
             clientRepository.save(client);
         }
         seedUser("admin@test.com", "Admin1234", 3);
@@ -164,13 +163,12 @@ public class DataInitializer implements CommandLineRunner {
         address.setApartmentNumber(null);
         address.setPostalCode("00-029");
         address.setCity("Warszawa");
-        Address savedAddress = addressRepository.save(address);
 
         Client client = new Client();
         client.setUser(savedUser);
         client.setName("Anna");
         client.setSurname("Nowak");
-        client.setAddresses(List.of(savedAddress));
+        client.setAddresses(List.of(address));
         clientRepository.save(client);
 
         return savedUser;

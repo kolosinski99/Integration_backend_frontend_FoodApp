@@ -10,10 +10,10 @@ const publicAxios = axios.create({
 });
 
 const RESTAURANT_CATEGORIES = [
-  { id: 1, categories_name: 'Włoska' },
-  { id: 2, categories_name: 'Polska' },
-  { id: 3, categories_name: 'Azjatycka' },
-  { id: 4, categories_name: 'Fast food' },
+  { id: 1, category_name: 'Włoska' },
+  { id: 2, category_name: 'Polska' },
+  { id: 3, category_name: 'Azjatycka' },
+  { id: 4, category_name: 'Fast food' },
 ];
 
 const delay = (ms = 400) =>
