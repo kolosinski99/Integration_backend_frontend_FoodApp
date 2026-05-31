@@ -1,11 +1,13 @@
 package com.foodorder.foodorderapp.security;
 
+import com.foodorder.foodorderapp.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -13,13 +15,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -55,11 +59,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().getAuthentication() == null
         ) {
 
+            String userLogin = login;
+            List<SimpleGrantedAuthority> authorities =
+                    userRepository.findByLogin(userLogin)
+                            .map(u -> u.getRoles().stream()
+                                    .map(r -> new SimpleGrantedAuthority(
+                                            "ROLE_" + r.getRoleName()))
+                                    .toList())
+                            .orElse(List.of());
+
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
-                            new User(login, "", Collections.emptyList()),
+                            new User(login, "", authorities),
                             null,
-                            Collections.emptyList()
+                            authorities
                     );
 
             authToken.setDetails(

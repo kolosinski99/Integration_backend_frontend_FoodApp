@@ -75,12 +75,16 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers(
+                                "/api/payment-methods"
+                        ).authenticated()
+
+                        .requestMatchers(
                                 "/api/orders/**"
                         ).authenticated()
 
                         .requestMatchers(
                                 "/api/admin/**"
-                        ).authenticated()
+                        ).hasRole("ADMIN")
 
                         .anyRequest()
                         .authenticated()
