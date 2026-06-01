@@ -87,6 +87,78 @@ const RestaurantDetailPage = () => {
       <h1 className={styles.name}>{restaurant.restaurant_name}</h1>
       <p className={styles.address}>{buildAddressLine(restaurant)}</p>
       <p className={styles.description}>{restaurant.description}</p>
+
+      <div className={styles.infoGrid}>
+
+        {restaurant.open_from && restaurant.open_to && (
+          <div className={styles.infoCard}>
+            <span className={styles.infoIcon}>🕐</span>
+            <div>
+              <p className={styles.infoLabel}>Godziny otwarcia</p>
+              <p className={styles.infoValue}>
+                {restaurant.open_from} — {restaurant.open_to}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {restaurant.delivery_from && restaurant.delivery_to && (
+          <div className={styles.infoCard}>
+            <span className={styles.infoIcon}>🚴</span>
+            <div>
+              <p className={styles.infoLabel}>Godziny dowozu</p>
+              <p className={styles.infoValue}>
+                {restaurant.delivery_from} — {restaurant.delivery_to}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {restaurant.delivery_price != null && (
+          <div className={styles.infoCard}>
+            <span className={styles.infoIcon}>💰</span>
+            <div>
+              <p className={styles.infoLabel}>Dostawa</p>
+              <p className={styles.infoValue}>
+                {Number(restaurant.delivery_price) === 0
+                  ? 'Bezpłatna'
+                  : `${Number(restaurant.delivery_price).toFixed(2)} zł`}
+                {restaurant.free_delivery_from && (
+                  <span className={styles.infoSub}>
+                    {' '}(gratis od{' '}
+                    {Number(restaurant.free_delivery_from).toFixed(2)} zł)
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {restaurant.min_order_amount != null &&
+          Number(restaurant.min_order_amount) > 0 && (
+          <div className={styles.infoCard}>
+            <span className={styles.infoIcon}>🛒</span>
+            <div>
+              <p className={styles.infoLabel}>Min. zamówienie</p>
+              <p className={styles.infoValue}>
+                {Number(restaurant.min_order_amount).toFixed(2)} zł
+              </p>
+            </div>
+          </div>
+        )}
+
+        {restaurant.pickup_available === 1 && (
+          <div className={styles.infoCard}>
+            <span className={styles.infoIcon}>🏃</span>
+            <div>
+              <p className={styles.infoLabel}>Odbiór osobisty</p>
+              <p className={styles.infoValue}>Dostępny</p>
+            </div>
+          </div>
+        )}
+
+      </div>
+
       <div className={styles.actions}>
         <Button onClick={() => navigate(`/restaurants/${restaurant.id_restaurant}/menu`)}>
           Zobacz menu

@@ -71,3 +71,46 @@
   gap: 12px;
   align-items: center;
 }
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.infoCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+}
+
+.infoIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin: 0 0 2px;
+}
+
+.infoValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+  margin: 0;
+}
+
+.infoSub {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666;
+}
