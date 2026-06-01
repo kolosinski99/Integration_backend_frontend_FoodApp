@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getMyRestaurant } from '../../api/restaurantApi';
+import { getRestaurantOrders } from '../../api/orderApi';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
 import SuccessBanner from '../../components/SuccessBanner';
@@ -21,6 +22,7 @@ const OwnerDashboardPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasNoRestaurant, setHasNoRestaurant] = useState(false);
+  const [activeOrderCount, setActiveOrderCount] = useState(0);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -46,6 +48,14 @@ const OwnerDashboardPage = () => {
 
   useEffect(() => {
     fetchData();
+    getRestaurantOrders()
+      .then((res) => {
+        const active = (res.data || []).filter(
+          (o) => o.status_name === 'NEW' || o.status_name === 'IN_PROGRESS'
+        ).length;
+        setActiveOrderCount(active);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -112,6 +122,9 @@ const OwnerDashboardPage = () => {
             onClick={() => navigate('/owner/orders')}
           >
             Zamówienia
+            {activeOrderCount > 0 && (
+              <span className={styles.orderBadge}>{activeOrderCount}</span>
+            )}
           </Button>
         </div>
       )}

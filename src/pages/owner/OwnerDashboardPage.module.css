@@ -79,3 +79,18 @@
   align-items: center;
   color: #b71c1c;
 }
+
+.orderBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  background: #ef6c00;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+  padding: 0 5px;
+}

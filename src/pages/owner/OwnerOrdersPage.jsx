@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getRestaurantOrders, updateOrderStatus } from '../../api/orderApi';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
@@ -26,6 +26,25 @@ const OwnerOrdersPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
+  const [activeTab, setActiveTab] = useState('active');
+
+  const tabCounts = useMemo(() => ({
+    active: orders.filter((o) =>
+      o.status_name === 'NEW' || o.status_name === 'IN_PROGRESS'
+    ).length,
+    completed: orders.filter((o) => o.status_name === 'COMPLETED').length,
+    cancelled: orders.filter((o) => o.status_name === 'CANCELLED').length,
+  }), [orders]);
+
+  const displayed = useMemo(() => {
+    if (activeTab === 'active')
+      return orders.filter((o) =>
+        o.status_name === 'NEW' || o.status_name === 'IN_PROGRESS'
+      );
+    if (activeTab === 'completed')
+      return orders.filter((o) => o.status_name === 'COMPLETED');
+    return orders.filter((o) => o.status_name === 'CANCELLED');
+  }, [orders, activeTab]);
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -75,13 +94,37 @@ const OwnerOrdersPage = () => {
     <div>
       <h1 className={styles.title}>Zamówienia</h1>
 
-      {orders.length === 0 ? (
+      <div className={styles.tabs}>
+        <button
+          type="button"
+          className={`${styles.tab} ${activeTab === 'active' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('active')}
+        >
+          Aktywne ({tabCounts.active})
+        </button>
+        <button
+          type="button"
+          className={`${styles.tab} ${activeTab === 'completed' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('completed')}
+        >
+          Zrealizowane ({tabCounts.completed})
+        </button>
+        <button
+          type="button"
+          className={`${styles.tab} ${activeTab === 'cancelled' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('cancelled')}
+        >
+          Anulowane ({tabCounts.cancelled})
+        </button>
+      </div>
+
+      {displayed.length === 0 ? (
         <div className={styles.emptyState}>
-          <p>Brak zamówień do wyświetlenia.</p>
+          <p>Brak zamówień w tej kategorii.</p>
         </div>
       ) : (
         <div className={styles.list}>
-          {orders.map((order) => {
+          {displayed.map((order) => {
             const meta = STATUS_META[order.status_name] || {
               label: order.status_name,
               className: 'statusNew',
@@ -90,7 +133,10 @@ const OwnerOrdersPage = () => {
             const isNew = order.status_name === 'NEW';
             const isProgress = order.status_name === 'IN_PROGRESS';
             return (
-              <div key={order.id_order} className={styles.card}>
+              <div
+                key={order.id_order}
+                className={`${styles.card} ${isNew ? styles.cardNew : ''}`}
+              >
                 <div className={styles.cardHeader}>
                   <div>
                     <span className={styles.orderNumber}>#{order.id_order}</span>
