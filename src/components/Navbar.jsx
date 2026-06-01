@@ -32,7 +32,7 @@ const Navbar = () => {
                   Restauracje
                 </NavLink>
                 <NavLink to="/orders" className={navLinkClass}>
-                  Moje zamówienia
+                  Zamówienia
                 </NavLink>
                 <NavLink to="/cart" className={navLinkClass}>
                   Koszyk
