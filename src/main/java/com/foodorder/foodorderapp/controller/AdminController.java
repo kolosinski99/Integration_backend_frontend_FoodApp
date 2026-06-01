@@ -1,5 +1,6 @@
 package com.foodorder.foodorderapp.controller;
 
+import com.foodorder.foodorderapp.dto.AdminRestaurantDetailDto;
 import com.foodorder.foodorderapp.dto.RestaurantDto;
 import com.foodorder.foodorderapp.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,11 @@ public class AdminController {
     @GetMapping("/api/admin/restaurants")
     public List<RestaurantDto> allRestaurants() {
         return adminService.getAllRestaurants();
+    }
+
+    @GetMapping("/api/admin/restaurants/{id}")
+    public AdminRestaurantDetailDto restaurantDetail(@PathVariable Integer id) {
+        return adminService.getRestaurantDetail(id);
     }
 
     @PatchMapping("/api/admin/restaurants/{id}/approve")

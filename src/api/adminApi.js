@@ -89,3 +89,29 @@ export const approveRestaurant = (id) =>
 
 export const rejectRestaurant = (id) =>
   useMock ? mockRejectRestaurant(id) : axiosInstance.patch(`/admin/restaurants/${id}/reject`);
+
+export const getAdminRestaurantDetail = (id) => {
+  if (useMock) {
+    const r = store.restaurants.find((x) => x.id_restaurant === id);
+    return Promise.resolve({
+      data: {
+        ...r,
+        category_name: 'Włoska',
+        owner_login: 'owner@example.com',
+        owner_name: 'Jan',
+        owner_surname: 'Kowalski',
+        menu: [
+          {
+            id_menu_product: 1,
+            product_name: 'Pizza Margherita',
+            price: 32.99,
+            product_description: 'Sos pomidorowy, mozzarella',
+            spice_level: 0,
+            allergens: 'gluten, laktoza',
+          },
+        ],
+      },
+    });
+  }
+  return axiosInstance.get(`/admin/restaurants/${id}`);
+};
