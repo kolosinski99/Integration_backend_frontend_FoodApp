@@ -70,6 +70,21 @@
   color: #c62828;
 }
 
+.expandButton {
+  background: none;
+  border: none;
+  color: #ef6c00;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0;
+  text-align: left;
+}
+
+.expandButton:hover {
+  text-decoration: underline;
+}
+
 .items {
   list-style: none;
   margin: 0 0 10px;

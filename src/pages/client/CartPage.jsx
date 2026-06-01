@@ -172,6 +172,24 @@ const CartPage = () => {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Koszyk</h1>
+
+      <div className={styles.steps}>
+        <div className={`${styles.step} ${styles.stepDone}`}>
+          <span className={styles.stepNum}>1</span>
+          <span className={styles.stepLabel}>Koszyk</span>
+        </div>
+        <div className={styles.stepLine} />
+        <div className={`${styles.step} ${styles.stepActive}`}>
+          <span className={styles.stepNum}>2</span>
+          <span className={styles.stepLabel}>Adres i płatność</span>
+        </div>
+        <div className={styles.stepLine} />
+        <div className={styles.step}>
+          <span className={styles.stepNum}>3</span>
+          <span className={styles.stepLabel}>Potwierdzenie</span>
+        </div>
+      </div>
+
       <div className={styles.layout}>
         <section className={styles.itemsColumn}>
           {items.map((item) => {
@@ -371,13 +389,21 @@ const CartPage = () => {
 
           {apiError && <div className={styles.apiError}>{apiError}</div>}
 
-          <Button
-            className={styles.submitButton}
+          <button
+            type="button"
+            className={`${styles.submitButton} ${!canSubmit ? styles.submitDisabled : ''}`}
             disabled={!canSubmit}
             onClick={handleSubmit}
           >
-            {submitting ? 'Składanie...' : 'Złóż zamówienie'}
-          </Button>
+            {submitting ? (
+              <span className={styles.submittingRow}>
+                <span className={styles.submitSpinner} />
+                Składanie zamówienia...
+              </span>
+            ) : (
+              `Złóż zamówienie — ${formatPrice(totalPrice)}`
+            )}
+          </button>
         </aside>
       </div>
     </div>

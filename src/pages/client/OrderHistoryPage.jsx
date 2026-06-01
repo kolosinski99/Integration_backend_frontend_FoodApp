@@ -31,6 +31,11 @@ const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+
+  const toggleExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -103,16 +108,28 @@ const OrderHistoryPage = () => {
 
                 <div className={styles.date}>{formatDate(order.create_date)}</div>
 
-                <ul className={styles.items}>
-                  {order.items.map((it) => (
-                    <li key={it.menu_product_id}>
-                      <span>
-                        {it.product_name} × {it.quantity}
-                      </span>
-                      <span>{formatPrice(it.item_price * it.quantity)}</span>
-                    </li>
-                  ))}
-                </ul>
+                <button
+                  type="button"
+                  className={styles.expandButton}
+                  onClick={() => toggleExpand(order.id_order)}
+                >
+                  {expandedId === order.id_order
+                    ? 'Ukryj szczegóły ▲'
+                    : `Pokaż szczegóły (${order.items.length} poz.) ▼`}
+                </button>
+
+                {expandedId === order.id_order && (
+                  <ul className={styles.items}>
+                    {order.items.map((it) => (
+                      <li key={it.menu_product_id}>
+                        <span>
+                          {it.product_name} × {it.quantity}
+                        </span>
+                        <span>{formatPrice(it.item_price * it.quantity)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
                 {order.client_comment && (
                   <p className={styles.comment}>Uwagi: {order.client_comment}</p>
