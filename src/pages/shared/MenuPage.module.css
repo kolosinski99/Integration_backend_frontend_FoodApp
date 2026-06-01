@@ -1,26 +1,39 @@
-.header {
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 1px solid #eaeaea;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  gap: 16px;
+  padding: 12px 0;
+  margin-bottom: 16px;
 }
 
 .title {
-  margin: 0 0 4px;
-  font-size: 26px;
+  font-size: 20px;
+  font-weight: 700;
   color: #222;
-}
-
-.address {
   margin: 0;
-  color: #6b7280;
-  font-size: 14px;
 }
 
 .backLink {
   font-size: 14px;
+  color: #ef6c00;
+  text-decoration: none;
+  font-weight: 500;
   white-space: nowrap;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.address {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 20px;
 }
 
 .section {

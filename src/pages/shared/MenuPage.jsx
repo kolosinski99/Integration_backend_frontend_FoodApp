@@ -77,23 +77,23 @@ const MenuPage = () => {
 
   return (
     <div>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>
-            {restaurant?.restaurant_name || 'Menu'}
-          </h1>
-          {(restaurant?.street || restaurant?.city) && (
-            <p className={styles.address}>
-              {[restaurant.street, restaurant.house_number]
-                .filter(Boolean).join(' ')}
-              {restaurant.city ? `, ${restaurant.city}` : ''}
-            </p>
-          )}
-        </div>
+      <div className={styles.stickyHeader}>
         <Link to={`/restaurants/${id}`} className={styles.backLink}>
-          ← Wróć do restauracji
+          ← Wróć
         </Link>
+        <h1 className={styles.title}>
+          {restaurant?.restaurant_name || 'Menu'}
+        </h1>
+        <span />
       </div>
+
+      {(restaurant?.street || restaurant?.city) && (
+        <p className={styles.address}>
+          {[restaurant.street, restaurant.house_number]
+            .filter(Boolean).join(' ')}
+          {restaurant.city ? `, ${restaurant.city}` : ''}
+        </p>
+      )}
 
       {items.length === 0 ? (
         <p className={styles.empty}>Ta restauracja nie ma jeszcze menu.</p>

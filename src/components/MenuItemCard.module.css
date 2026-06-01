@@ -66,6 +66,11 @@
 }
 
 .actions {
+  margin-top: 12px;
   display: flex;
   justify-content: flex-end;
+}
+
+.actions button {
+  min-width: 160px;
 }

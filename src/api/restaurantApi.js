@@ -165,3 +165,15 @@ export const updateRestaurant = (id, formData) =>
     : axiosInstance.put(`/restaurants/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
+const mockCategories = [
+  { id_restaurant_category: 1, category_name: 'Pizzeria' },
+  { id_restaurant_category: 2, category_name: 'Sushi' },
+  { id_restaurant_category: 3, category_name: 'Burger' },
+  { id_restaurant_category: 4, category_name: 'Polska' },
+];
+
+export const getRestaurantCategories = () =>
+  useMock
+    ? Promise.resolve({ data: mockCategories })
+    : axiosInstance.get('/restaurant-categories');

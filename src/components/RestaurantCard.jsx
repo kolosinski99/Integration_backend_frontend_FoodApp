@@ -40,7 +40,8 @@ const buildAddressLine = (r) => {
 
 const RestaurantCard = ({
                           restaurant,
-                          onClick
+                          onClick,
+                          categoryName
                         }) => {
 
   const imageUrl = restaurant.image_path
@@ -99,20 +100,33 @@ const RestaurantCard = ({
 
         <div className={styles.body}>
 
-          <h3 className={styles.name}>
-            {restaurant.restaurant_name}
-          </h3>
+          <div className={styles.topRow}>
+            <h3 className={styles.name}>
+              {restaurant.restaurant_name}
+            </h3>
+            {categoryName && (
+                <span className={styles.badge}>
+                  {categoryName}
+                </span>
+            )}
+          </div>
 
           <p className={styles.address}>
             {buildAddressLine(restaurant)}
           </p>
 
-          <p className={styles.description}>
-            {truncate(
-                restaurant.description,
-                100
-            )}
-          </p>
+          {restaurant.description && (
+              <p className={styles.description}>
+                {truncate(
+                    restaurant.description,
+                    100
+                )}
+              </p>
+          )}
+
+          <span className={styles.cta}>
+            Zobacz menu →
+          </span>
 
         </div>
 

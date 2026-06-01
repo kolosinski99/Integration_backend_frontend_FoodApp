@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getRestaurants } from '../../api/restaurantApi';
+import { getRestaurants, getRestaurantCategories } from '../../api/restaurantApi';
 import RestaurantCard from '../../components/RestaurantCard';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
@@ -9,6 +9,7 @@ import styles from './RestaurantListPage.module.css';
 const RestaurantListPage = () => {
   const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
@@ -17,17 +18,29 @@ const RestaurantListPage = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await getRestaurants();
-      const all = Array.isArray(response.data) ? response.data : [];
+      const [restaurantsRes, categoriesRes] = await Promise.all([
+        getRestaurants(),
+        getRestaurantCategories(),
+      ]);
+      const all = Array.isArray(restaurantsRes.data) ? restaurantsRes.data : [];
       // Backend powinien zwracać tylko is_approved = 1 dla roli USER.
       // Filtr po stronie frontendu jako zabezpieczenie dodatkowe.
       setRestaurants(all.filter((r) => r.is_approved === 1));
+      setCategories(Array.isArray(categoriesRes.data) ? categoriesRes.data : []);
     } catch {
       setError('Nie udało się załadować restauracji. Spróbuj ponownie.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  const categoryMap = useMemo(() => {
+    const m = {};
+    categories.forEach((c) => {
+      m[c.id_restaurant_category] = c.category_name;
+    });
+    return m;
+  }, [categories]);
 
   useEffect(() => {
     fetchData();
@@ -76,6 +89,7 @@ const RestaurantListPage = () => {
               key={restaurant.id_restaurant}
               restaurant={restaurant}
               onClick={() => navigate(`/restaurants/${restaurant.id_restaurant}`)}
+              categoryName={categoryMap[restaurant.restaurant_category_id]}
             />
           ))}
         </div>
