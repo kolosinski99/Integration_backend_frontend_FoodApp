@@ -14,6 +14,9 @@ const store = {
       city: 'Wrocław',
       is_approved: 0,
       restaurant_category_id: 1,
+      owner_name: 'Piotr',
+      owner_surname: 'Wiśniewski',
+      owner_login: 'piotr@pasta.pl',
     },
     {
       id_restaurant: 13,
@@ -23,6 +26,9 @@ const store = {
       city: 'Szczecin',
       is_approved: 0,
       restaurant_category_id: 1,
+      owner_name: 'Marta',
+      owner_surname: 'Zielińska',
+      owner_login: 'marta@vege.pl',
     },
     {
       id_restaurant: 4,
@@ -32,6 +38,9 @@ const store = {
       city: 'Lublin',
       is_approved: 1,
       restaurant_category_id: 1,
+      owner_name: 'Anna',
+      owner_surname: 'Nowak',
+      owner_login: 'owner@test.com',
     },
     {
       id_restaurant: 14,
@@ -41,6 +50,9 @@ const store = {
       city: 'Gdańsk',
       is_approved: 0,
       restaurant_category_id: 1,
+      owner_name: 'Karolina',
+      owner_surname: 'Dąbrowska',
+      owner_login: 'karolina@sweet.pl',
     },
     {
       id_restaurant: 12,
@@ -50,6 +62,9 @@ const store = {
       city: 'Poznań',
       is_approved: 1,
       restaurant_category_id: 1,
+      owner_name: 'Tomasz',
+      owner_surname: 'Kowalczyk',
+      owner_login: 'tomasz@steak.pl',
     },
   ],
 };

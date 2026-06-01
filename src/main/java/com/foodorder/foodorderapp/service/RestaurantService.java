@@ -12,6 +12,8 @@ import com.foodorder.foodorderapp.repository.RestaurantCategoryRepository;
 import com.foodorder.foodorderapp.repository.RestaurantRepository;
 import com.foodorder.foodorderapp.repository.UserRepository;
 import com.foodorder.foodorderapp.repository.UserRoleRepository;
+import com.foodorder.foodorderapp.entity.Client;
+import com.foodorder.foodorderapp.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +39,7 @@ public class RestaurantService {
 
     private final AccountStatusRepository accountStatusRepository;
     private final UserRoleRepository userRoleRepository;
+    private final ClientRepository clientRepository;
 
     public List<RestaurantDto> findAllForUser(String userLogin) {
 
@@ -146,6 +149,13 @@ public class RestaurantService {
         );
 
         user = userRepository.save(user);
+
+        Client ownerClient = new Client();
+        ownerClient.setUser(user);
+        ownerClient.setName(ownerFirstName != null ? ownerFirstName.trim() : "");
+        ownerClient.setSurname(ownerLastName != null ? ownerLastName.trim() : "");
+        ownerClient.setAddresses(new java.util.ArrayList<>());
+        clientRepository.save(ownerClient);
 
         RestaurantCategory category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResponseStatusException(

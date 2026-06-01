@@ -73,4 +73,13 @@ public class RestaurantDto {
 
     @JsonProperty("pickup_available")
     private Integer pickupAvailable;
+
+    @JsonProperty("owner_name")
+    private String ownerName;
+
+    @JsonProperty("owner_surname")
+    private String ownerSurname;
+
+    @JsonProperty("owner_login")
+    private String ownerLogin;
 }

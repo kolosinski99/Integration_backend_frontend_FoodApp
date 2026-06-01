@@ -130,6 +130,15 @@ public class AdminService {
         dto.setDeliveryFrom(timeToString(r.getDeliveryFrom()));
         dto.setDeliveryTo(timeToString(r.getDeliveryTo()));
         dto.setPickupAvailable(r.getPickupAvailable());
+
+        if (r.getUser() != null) {
+            dto.setOwnerLogin(r.getUser().getLogin());
+            clientRepository.findByUser(r.getUser()).ifPresent(c -> {
+                dto.setOwnerName(c.getName());
+                dto.setOwnerSurname(c.getSurname());
+            });
+        }
+
         return dto;
     }
 }

@@ -8,14 +8,7 @@ const mockProfileStore = {
     surname: '',
     login: '',
     role: '',
-    address: {
-      id_address: 1,
-      street: '',
-      house_number: '',
-      apartment_number: '',
-      postal_code: '',
-      city: '',
-    },
+    address: null,
   },
 };
 
@@ -26,7 +19,9 @@ const mockGet = async () => {
   return {
     data: {
       ...mockProfileStore.profile,
-      address: { ...mockProfileStore.profile.address },
+      address: mockProfileStore.profile.address
+        ? { ...mockProfileStore.profile.address }
+        : null,
     },
   };
 };

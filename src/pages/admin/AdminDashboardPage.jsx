@@ -255,7 +255,9 @@ const AdminDashboardPage = () => {
                     <div>
                       <p className={styles.modalLabel}>Imię i nazwisko</p>
                       <p className={styles.modalValue}>
-                        {detail.owner_name || '—'} {detail.owner_surname || ''}
+                        {[detail.owner_name, detail.owner_surname]
+                          .filter(Boolean)
+                          .join(' ') || '—'}
                       </p>
                     </div>
                     <div>
