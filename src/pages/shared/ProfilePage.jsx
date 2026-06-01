@@ -61,8 +61,23 @@ const ProfilePage = () => {
 
       setProfile(merged);
       setForm(toFormShape(merged));
-    } catch {
-      setLoadError('Nie udało się załadować danych profilu.');
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        // No profile yet, use AuthContext fallback
+        const fallback = {
+          name: user?.name || user?.firstName || '',
+          surname: user?.surname || '',
+          login: user?.email || user?.login || '',
+          role: user?.role || '',
+          address: {
+            street: '', house_number: '', apartment_number: '', postal_code: '', city: ''
+          }
+        };
+        setProfile(fallback);
+        setForm(toFormShape(fallback));
+      } else {
+        setLoadError('Nie udało się załadować danych profilu.');
+      }
     } finally {
       setIsLoading(false);
     }

@@ -26,13 +26,15 @@ public class ProfileService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Użytkownik nie istnieje"));
 
-        Client client = clientRepository.findByUser(user)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Profil klienta nie istnieje"));
+        Client client = clientRepository.findByUser(user).orElse(null);
 
         String role = user.getRoles().isEmpty()
                 ? "USER"
                 : user.getRoles().get(0).getRoleName();
+
+        if (client == null) {
+            return new ProfileDto("", "", user.getLogin(), role, null);
+        }
 
         Address addr = client.getAddresses() != null
                 && !client.getAddresses().isEmpty()
@@ -64,26 +66,38 @@ public class ProfileService {
                         HttpStatus.NOT_FOUND, "Użytkownik nie istnieje"));
 
         Client client = clientRepository.findByUser(user)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Profil klienta nie istnieje"));
+                .orElseGet(() -> {
+                    Client c = new Client();
+                    c.setUser(user);
+                    c.setAddresses(new java.util.ArrayList<>());
+                    return c;
+                });
 
         if (req.getName() != null)
             client.setName(req.getName());
         if (req.getSurname() != null)
             client.setSurname(req.getSurname());
 
-        if (client.getAddresses() != null && !client.getAddresses().isEmpty()) {
-            Address addr = client.getAddresses().get(0);
-            if (req.getStreet() != null)
-                addr.setStreet(req.getStreet());
-            if (req.getHouseNumber() != null)
-                addr.setHouseNumber(req.getHouseNumber());
-            addr.setApartmentNumber(req.getApartmentNumber());
-            if (req.getPostalCode() != null)
-                addr.setPostalCode(req.getPostalCode());
-            if (req.getCity() != null)
-                addr.setCity(req.getCity());
+        Address addr;
+        if (client.getAddresses() == null) {
+            client.setAddresses(new java.util.ArrayList<>());
         }
+        if (client.getAddresses().isEmpty()) {
+            addr = new Address();
+            client.getAddresses().add(addr);
+        } else {
+            addr = client.getAddresses().get(0);
+        }
+
+        if (req.getStreet() != null)
+            addr.setStreet(req.getStreet());
+        if (req.getHouseNumber() != null)
+            addr.setHouseNumber(req.getHouseNumber());
+        addr.setApartmentNumber(req.getApartmentNumber());
+        if (req.getPostalCode() != null)
+            addr.setPostalCode(req.getPostalCode());
+        if (req.getCity() != null)
+            addr.setCity(req.getCity());
 
         clientRepository.save(client);
         return getProfile(login);
