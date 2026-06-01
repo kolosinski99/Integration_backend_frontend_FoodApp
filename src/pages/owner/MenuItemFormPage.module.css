@@ -123,3 +123,52 @@
   background: #f5f5f5;
   border-color: #999;
 }
+
+.spiceRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.spiceOption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fafafa;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.spiceOption:has(input:checked) {
+  background: #fff5eb;
+  border-color: #ef6c00;
+}
+
+.allergenHints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.allergenHint {
+  font-size: 12px;
+  padding: 3px 10px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #555;
+  transition: background 0.12s;
+}
+
+.allergenHint:hover {
+  background: #fff5eb;
+  border-color: #ef6c00;
+  color: #ef6c00;
+}

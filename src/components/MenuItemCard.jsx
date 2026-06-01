@@ -57,6 +57,19 @@ const MenuItemCard = ({ menuItem, onAddToCart }) => {
                 </p>
             )}
 
+            {menuItem.spice_level > 0 && (
+                <div className={styles.spice}>
+                    {'🌶️'.repeat(menuItem.spice_level)}
+                </div>
+            )}
+
+            {menuItem.allergens && (
+                <div className={styles.allergens}>
+                    <span className={styles.allergenLabel}>Alergeny: </span>
+                    {menuItem.allergens}
+                </div>
+            )}
+
             {onAddToCart && (
                 <div className={styles.actions}>
                     <Button onClick={() => onAddToCart(menuItem)}>

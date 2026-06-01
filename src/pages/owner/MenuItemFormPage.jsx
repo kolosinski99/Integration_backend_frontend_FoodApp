@@ -27,6 +27,8 @@ const initialForm = {
   category_id: '',
   price: '',
   product_description: '',
+  spiceLevel: 0,
+  allergens: '',
 };
 
 const MenuItemFormPage = () => {
@@ -72,6 +74,8 @@ const MenuItemFormPage = () => {
                 ? String(item.price).replace('.', ',')
                 : '',
             product_description: item.product_description || '',
+            spiceLevel: item.spice_level ?? 0,
+            allergens: item.allergens ?? '',
           });
           setExistingImagePath(item.image_path || null);
         }
@@ -108,6 +112,14 @@ const MenuItemFormPage = () => {
 
     if (form.product_description.length > DESCRIPTION_MAX)
       next.product_description = `Opis może mieć maksymalnie ${DESCRIPTION_MAX} znaków.`;
+
+    if (form.spiceLevel < 0 || form.spiceLevel > 3) {
+      next.spiceLevel = 'Skala ostrości: 0–3';
+    }
+
+    if (form.allergens.length > 255) {
+      next.allergens = 'Maksymalnie 255 znaków';
+    }
 
     return next;
   }, [form, priceNumber]);
@@ -202,6 +214,9 @@ const MenuItemFormPage = () => {
       if (imageFile) {
         formData.append('image', imageFile);
       }
+      formData.append('spice_level', form.spiceLevel);
+      if (form.allergens.trim())
+        formData.append('allergens', form.allergens.trim());
 
       if (isEditMode) {
         await updateMenuItem(id, formData);
@@ -301,6 +316,76 @@ const MenuItemFormPage = () => {
           </div>
           {visibleError('product_description') && (
             <span className={styles.error}>{visibleError('product_description')}</span>
+          )}
+        </div>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Skala ostrości</label>
+          <div className={styles.spiceRow}>
+            {[
+              { value: 0, label: '😌 Łagodne' },
+              { value: 1, label: '🌶️ Lekko ostre' },
+              { value: 2, label: '🌶️🌶️ Ostre' },
+              { value: 3, label: '🌶️🌶️🌶️ Bardzo ostre' },
+            ].map(opt => (
+              <label key={opt.value} className={styles.spiceOption}>
+                <input
+                  type="radio"
+                  name="spiceLevel"
+                  value={opt.value}
+                  checked={Number(form.spiceLevel) === opt.value}
+                  onChange={() =>
+                    setForm(prev => ({ ...prev, spiceLevel: opt.value }))
+                  }
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+          {fieldErrors.spiceLevel && (
+            <p className={styles.error}>{fieldErrors.spiceLevel}</p>
+          )}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="allergens" className={styles.label}>
+            Alergeny (opcjonalne)
+          </label>
+          <textarea
+            id="allergens"
+            name="allergens"
+            value={form.allergens}
+            onChange={handleChange}
+            rows={2}
+            maxLength={255}
+            placeholder="np. gluten, laktoza, orzechy, jaja"
+            className={styles.textarea}
+          />
+          <div className={styles.allergenHints}>
+            {['gluten', 'laktoza', 'orzechy', 'jaja', 'soja',
+              'ryby', 'seler', 'gorczyca'].map(hint => (
+              <button
+                key={hint}
+                type="button"
+                className={styles.allergenHint}
+                onClick={() =>
+                  setForm(prev => ({
+                    ...prev,
+                    allergens: prev.allergens
+                      ? `${prev.allergens}, ${hint}`
+                      : hint,
+                  }))
+                }
+              >
+                + {hint}
+              </button>
+            ))}
+          </div>
+          <span className={styles.counter}>
+            {form.allergens.length} / 255
+          </span>
+          {fieldErrors.allergens && (
+            <p className={styles.error}>{fieldErrors.allergens}</p>
           )}
         </div>
 
