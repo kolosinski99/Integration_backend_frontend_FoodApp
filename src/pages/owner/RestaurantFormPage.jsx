@@ -30,6 +30,14 @@ const initialForm = {
   apartmentNumber: '',
   postalCode: '',
   city: '',
+  deliveryPrice: '',
+  freeDeliveryFrom: '',
+  minOrderAmount: '',
+  openFrom: '',
+  openTo: '',
+  deliveryFrom: '',
+  deliveryTo: '',
+  pickupAvailable: false,
 };
 
 const RestaurantFormPage = () => {
@@ -73,6 +81,14 @@ const RestaurantFormPage = () => {
             apartmentNumber: data.apartment_number || '',
             postalCode: data.postal_code || '',
             city: data.city || '',
+            deliveryPrice: data.delivery_price ?? '',
+            freeDeliveryFrom: data.free_delivery_from ?? '',
+            minOrderAmount: data.min_order_amount ?? '',
+            openFrom: data.open_from ?? '',
+            openTo: data.open_to ?? '',
+            deliveryFrom: data.delivery_from ?? '',
+            deliveryTo: data.delivery_to ?? '',
+            pickupAvailable: data.pickup_available === 1,
           });
         }
       } catch {
@@ -108,6 +124,25 @@ const RestaurantFormPage = () => {
       next.postalCode = 'Kod pocztowy musi mieć format XX-XXX.';
 
     if (!form.city.trim()) next.city = 'Miasto jest wymagane.';
+
+    if (form.deliveryPrice !== '' &&
+        (isNaN(Number(form.deliveryPrice)) || Number(form.deliveryPrice) < 0)) {
+      next.deliveryPrice = 'Podaj prawidłową cenę (np. 5.99)';
+    }
+    if (form.freeDeliveryFrom !== '' &&
+        (isNaN(Number(form.freeDeliveryFrom)) || Number(form.freeDeliveryFrom) <= 0)) {
+      next.freeDeliveryFrom = 'Podaj kwotę większą od 0';
+    }
+    if (form.minOrderAmount !== '' &&
+        (isNaN(Number(form.minOrderAmount)) || Number(form.minOrderAmount) < 0)) {
+      next.minOrderAmount = 'Podaj prawidłową kwotę';
+    }
+    if ((form.openFrom && !form.openTo) || (!form.openFrom && form.openTo)) {
+      next.openHours = 'Podaj obie godziny otwarcia';
+    }
+    if ((form.deliveryFrom && !form.deliveryTo) || (!form.deliveryFrom && form.deliveryTo)) {
+      next.deliveryHours = 'Podaj obie godziny dowozu';
+    }
 
     return next;
   }, [form]);
@@ -184,6 +219,17 @@ const RestaurantFormPage = () => {
       if (imageFile) {
         formData.append('image', imageFile);
       }
+      if (form.deliveryPrice !== '')
+        formData.append('delivery_price', form.deliveryPrice);
+      if (form.freeDeliveryFrom !== '')
+        formData.append('free_delivery_from', form.freeDeliveryFrom);
+      if (form.minOrderAmount !== '')
+        formData.append('min_order_amount', form.minOrderAmount);
+      if (form.openFrom) formData.append('open_from', form.openFrom);
+      if (form.openTo) formData.append('open_to', form.openTo);
+      if (form.deliveryFrom) formData.append('delivery_from', form.deliveryFrom);
+      if (form.deliveryTo) formData.append('delivery_to', form.deliveryTo);
+      formData.append('pickup_available', form.pickupAvailable ? '1' : '0');
 
       if (isEditMode) {
         await updateRestaurant(restaurantId, formData);
@@ -315,6 +361,135 @@ const RestaurantFormPage = () => {
           maxLength={45}
           autoComplete="address-level2"
         />
+
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeading}>Godziny pracy</h3>
+
+          <div className={styles.timeRow}>
+            <div className={styles.timeField}>
+              <label htmlFor="openFrom" className={styles.label}>
+                Otwarcie od
+              </label>
+              <input
+                id="openFrom"
+                type="time"
+                name="openFrom"
+                value={form.openFrom}
+                onChange={handleChange}
+                className={styles.timeInput}
+              />
+            </div>
+            <span className={styles.timeSep}>—</span>
+            <div className={styles.timeField}>
+              <label htmlFor="openTo" className={styles.label}>
+                Zamknięcie
+              </label>
+              <input
+                id="openTo"
+                type="time"
+                name="openTo"
+                value={form.openTo}
+                onChange={handleChange}
+                className={styles.timeInput}
+              />
+            </div>
+          </div>
+          {fieldErrors.openHours && (
+            <p className={styles.fieldError}>{fieldErrors.openHours}</p>
+          )}
+
+          <div className={styles.timeRow} style={{ marginTop: 12 }}>
+            <div className={styles.timeField}>
+              <label htmlFor="deliveryFrom" className={styles.label}>
+                Dowóz od
+              </label>
+              <input
+                id="deliveryFrom"
+                type="time"
+                name="deliveryFrom"
+                value={form.deliveryFrom}
+                onChange={handleChange}
+                className={styles.timeInput}
+              />
+            </div>
+            <span className={styles.timeSep}>—</span>
+            <div className={styles.timeField}>
+              <label htmlFor="deliveryTo" className={styles.label}>
+                Dowóz do
+              </label>
+              <input
+                id="deliveryTo"
+                type="time"
+                name="deliveryTo"
+                value={form.deliveryTo}
+                onChange={handleChange}
+                className={styles.timeInput}
+              />
+            </div>
+          </div>
+          {fieldErrors.deliveryHours && (
+            <p className={styles.fieldError}>{fieldErrors.deliveryHours}</p>
+          )}
+        </div>
+
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeading}>Warunki dostawy</h3>
+
+          <Input
+            label="Cena dostawy (zł)"
+            name="deliveryPrice"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.deliveryPrice}
+            onChange={handleChange}
+            error={fieldErrors.deliveryPrice}
+            hint="Wpisz 0 jeśli dostawa jest bezpłatna"
+          />
+
+          <Input
+            label="Darmowa dostawa od kwoty (zł, opcjonalne)"
+            name="freeDeliveryFrom"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.freeDeliveryFrom}
+            onChange={handleChange}
+            error={fieldErrors.freeDeliveryFrom}
+            hint="Pozostaw puste jeśli nie oferujesz darmowej dostawy"
+          />
+
+          <Input
+            label="Minimalna kwota zamówienia (zł)"
+            name="minOrderAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.minOrderAmount}
+            onChange={handleChange}
+            error={fieldErrors.minOrderAmount}
+            hint="Wpisz 0 jeśli brak minimum"
+          />
+        </div>
+
+        <div className={styles.section}>
+          <h3 className={styles.sectionHeading}>Odbiór osobisty</h3>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              name="pickupAvailable"
+              checked={form.pickupAvailable}
+              onChange={e =>
+                setForm(prev => ({
+                  ...prev,
+                  pickupAvailable: e.target.checked,
+                }))
+              }
+              className={styles.checkbox}
+            />
+            Oferuję możliwość odbioru osobistego
+          </label>
+        </div>
 
         <h2 className={styles.sectionTitle}>Zdjęcie</h2>
         {isEditMode && apiImageUrl && !imagePreviewUrl && (
