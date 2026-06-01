@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "restaurants")
@@ -49,4 +50,28 @@ public class Restaurant {
 
     @Column(name = "is_approved")
     private Integer isApproved;
+
+    @Column(name = "delivery_price")
+    private BigDecimal deliveryPrice;
+
+    @Column(name = "free_delivery_from")
+    private BigDecimal freeDeliveryFrom;
+
+    @Column(name = "min_order_amount")
+    private BigDecimal minOrderAmount;
+
+    @Column(name = "open_from")
+    private LocalTime openFrom;
+
+    @Column(name = "open_to")
+    private LocalTime openTo;
+
+    @Column(name = "delivery_from")
+    private LocalTime deliveryFrom;
+
+    @Column(name = "delivery_to")
+    private LocalTime deliveryTo;
+
+    @Column(name = "pickup_available")
+    private Integer pickupAvailable;
 }

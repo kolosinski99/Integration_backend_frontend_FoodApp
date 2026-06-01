@@ -35,4 +35,9 @@ public class MenuProduct {
 
     @Column(name = "image_path")
     private String imagePath;
+
+    @Column(name = "spice_level")
+    private Integer spiceLevel;
+
+    private String allergens;
 }

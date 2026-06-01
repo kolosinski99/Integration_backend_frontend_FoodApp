@@ -35,9 +35,11 @@ public class MenuProductController {
             @RequestParam("product_name") String name,
             @RequestParam("price") BigDecimal price,
             @RequestParam(value = "product_description", required = false) String description,
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "spice_level", required = false) Integer spiceLevel,
+            @RequestParam(value = "allergens", required = false) String allergens
     ) {
-        return menuProductService.create(auth.getName(), restaurantId, categoryId, name, price, description, image);
+        return menuProductService.create(auth.getName(), restaurantId, categoryId, name, price, description, image, spiceLevel, allergens);
     }
 
     @PutMapping(value = "/api/menu-products/{id}", consumes = "multipart/form-data")
@@ -48,9 +50,11 @@ public class MenuProductController {
             @RequestParam(value = "product_name", required = false) String name,
             @RequestParam(value = "price", required = false) BigDecimal price,
             @RequestParam(value = "product_description", required = false) String description,
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "spice_level", required = false) Integer spiceLevel,
+            @RequestParam(value = "allergens", required = false) String allergens
     ) {
-        return menuProductService.update(id, auth.getName(), categoryId, name, price, description, image);
+        return menuProductService.update(id, auth.getName(), categoryId, name, price, description, image, spiceLevel, allergens);
     }
 
     @DeleteMapping("/api/menu-products/{id}")

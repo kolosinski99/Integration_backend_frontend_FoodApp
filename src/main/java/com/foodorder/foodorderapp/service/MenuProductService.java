@@ -42,7 +42,8 @@ public class MenuProductService {
     }
 
     public MenuProductDto create(String userLogin, Integer restaurantId, Integer categoryId,
-                                 String name, BigDecimal price, String description, MultipartFile image) {
+                                 String name, BigDecimal price, String description, MultipartFile image,
+                                 Integer spiceLevel, String allergens) {
         Restaurant restaurant = resolveRestaurant(userLogin, restaurantId);
         MenuProductCategory category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nieznana kategoria")
@@ -56,11 +57,18 @@ public class MenuProductService {
         if (image != null && !image.isEmpty()) {
             p.setImagePath(fileStorageService.store(image));
         }
+        if (spiceLevel != null) {
+            p.setSpiceLevel(spiceLevel);
+        }
+        if (allergens != null) {
+            p.setAllergens(allergens);
+        }
         return toDto(menuProductRepository.save(p));
     }
 
     public MenuProductDto update(Integer id, String userLogin, Integer categoryId,
-                                 String name, BigDecimal price, String description, MultipartFile image) {
+                                 String name, BigDecimal price, String description, MultipartFile image,
+                                 Integer spiceLevel, String allergens) {
         MenuProduct p = menuProductRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Danie nie istnieje")
         );
@@ -79,6 +87,12 @@ public class MenuProductService {
         if (description != null) p.setProductDescription(description);
         if (image != null && !image.isEmpty()) {
             p.setImagePath(fileStorageService.store(image));
+        }
+        if (spiceLevel != null) {
+            p.setSpiceLevel(spiceLevel);
+        }
+        if (allergens != null) {
+            p.setAllergens(allergens);
         }
         return toDto(menuProductRepository.save(p));
     }
@@ -128,7 +142,9 @@ public class MenuProductService {
                 p.getProductName(),
                 p.getPrice(),
                 p.getProductDescription(),
-                p.getImagePath()
+                p.getImagePath(),
+                p.getSpiceLevel(),
+                p.getAllergens()
         );
     }
 }

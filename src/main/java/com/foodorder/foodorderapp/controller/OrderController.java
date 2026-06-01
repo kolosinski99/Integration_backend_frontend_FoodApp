@@ -39,6 +39,6 @@ public class OrderController {
             @RequestBody UpdateOrderStatusRequest request,
             Authentication auth) {
         return orderService.updateStatus(
-                id, request.getStatusName(), auth.getName());
+                id, request.getStatusName(), request.getEstimatedMinutes(), auth.getName());
     }
 }

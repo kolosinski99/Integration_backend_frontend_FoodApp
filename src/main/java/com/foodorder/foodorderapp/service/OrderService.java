@@ -142,7 +142,7 @@ public class OrderService {
                 .stream().map(this::toDto).toList();
     }
 
-    public OrderDto updateStatus(Integer orderId, String statusName, String userLogin) {
+    public OrderDto updateStatus(Integer orderId, String statusName, Integer estimatedMinutes, String userLogin) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Zamówienie nie istnieje"));
@@ -155,6 +155,10 @@ public class OrderService {
 
         if ("CANCELLED".equals(statusName)) {
             order.setCancelledDate(LocalDateTime.now());
+        }
+
+        if (estimatedMinutes != null) {
+            order.setEstimatedMinutes(estimatedMinutes);
         }
 
         order.setStatus(status);
@@ -188,7 +192,8 @@ public class OrderService {
                 order.getClientComment(),
                 order.getRestaurantComment(),
                 total,
-                itemDtos
+                itemDtos,
+                order.getEstimatedMinutes()
         );
     }
 }

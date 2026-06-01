@@ -41,21 +41,32 @@ public class AdminService {
         return toDto(restaurantRepository.save(r));
     }
 
+    private String timeToString(java.time.LocalTime t) {
+        return t != null ? t.toString() : null;
+    }
+
     private RestaurantDto toDto(Restaurant r) {
-        return new RestaurantDto(
-                r.getId(),
-                r.getCategory() != null ? r.getCategory().getId() : null,
-                r.getUser() != null ? r.getUser().getId() : null,
-                r.getRestaurantName(),
-                r.getDescription(),
-                r.getStreet(),
-                r.getHouseNumber(),
-                r.getApartmentNumber(),
-                r.getPostalCode(),
-                r.getCity(),
-                r.getImagePath(),
-                r.getIsApproved(),
-                null
-        );
+        RestaurantDto dto = new RestaurantDto();
+        dto.setIdRestaurant(r.getId());
+        dto.setRestaurantCategoryId(r.getCategory() != null ? r.getCategory().getId() : null);
+        dto.setUserId(r.getUser() != null ? r.getUser().getId() : null);
+        dto.setRestaurantName(r.getRestaurantName());
+        dto.setDescription(r.getDescription());
+        dto.setStreet(r.getStreet());
+        dto.setHouseNumber(r.getHouseNumber());
+        dto.setApartmentNumber(r.getApartmentNumber());
+        dto.setPostalCode(r.getPostalCode());
+        dto.setCity(r.getCity());
+        dto.setImagePath(r.getImagePath());
+        dto.setIsApproved(r.getIsApproved());
+        dto.setDeliveryPrice(r.getDeliveryPrice());
+        dto.setFreeDeliveryFrom(r.getFreeDeliveryFrom());
+        dto.setMinOrderAmount(r.getMinOrderAmount());
+        dto.setOpenFrom(timeToString(r.getOpenFrom()));
+        dto.setOpenTo(timeToString(r.getOpenTo()));
+        dto.setDeliveryFrom(timeToString(r.getDeliveryFrom()));
+        dto.setDeliveryTo(timeToString(r.getDeliveryTo()));
+        dto.setPickupAvailable(r.getPickupAvailable());
+        return dto;
     }
 }

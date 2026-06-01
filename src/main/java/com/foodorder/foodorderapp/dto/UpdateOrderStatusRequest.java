@@ -10,4 +10,7 @@ public class UpdateOrderStatusRequest {
 
     @JsonProperty("status_name")
     private String statusName;
+
+    @JsonProperty("estimated_minutes")
+    private Integer estimatedMinutes;
 }

@@ -41,4 +41,7 @@ public class OrderDto {
     private BigDecimal totalPrice;
 
     private List<OrderItemDto> items;
+
+    @JsonProperty("estimated_minutes")
+    private Integer estimatedMinutes;
 }

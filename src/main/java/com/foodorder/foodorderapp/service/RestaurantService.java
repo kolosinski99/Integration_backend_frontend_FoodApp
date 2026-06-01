@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -196,7 +198,15 @@ public class RestaurantService {
             String apartmentNumber,
             String postalCode,
             String city,
-            MultipartFile image
+            MultipartFile image,
+            BigDecimal deliveryPrice,
+            BigDecimal freeDeliveryFrom,
+            BigDecimal minOrderAmount,
+            String openFrom,
+            String openTo,
+            String deliveryFrom,
+            String deliveryTo,
+            Integer pickupAvailable
     ) {
 
         Restaurant r = restaurantRepository.findById(id).orElseThrow(
@@ -261,6 +271,31 @@ public class RestaurantService {
             );
         }
 
+        if (deliveryPrice != null) {
+            r.setDeliveryPrice(deliveryPrice);
+        }
+        if (freeDeliveryFrom != null) {
+            r.setFreeDeliveryFrom(freeDeliveryFrom);
+        }
+        if (minOrderAmount != null) {
+            r.setMinOrderAmount(minOrderAmount);
+        }
+        if (openFrom != null) {
+            r.setOpenFrom(LocalTime.parse(openFrom));
+        }
+        if (openTo != null) {
+            r.setOpenTo(LocalTime.parse(openTo));
+        }
+        if (deliveryFrom != null) {
+            r.setDeliveryFrom(LocalTime.parse(deliveryFrom));
+        }
+        if (deliveryTo != null) {
+            r.setDeliveryTo(LocalTime.parse(deliveryTo));
+        }
+        if (pickupAvailable != null) {
+            r.setPickupAvailable(pickupAvailable);
+        }
+
         return toDto(
                 restaurantRepository.save(r)
         );
@@ -302,26 +337,32 @@ public class RestaurantService {
         return sb.toString();
     }
 
-    private RestaurantDto toDto(Restaurant r) {
+    private String timeToString(LocalTime t) {
+        return t != null ? t.toString() : null;
+    }
 
-        return new RestaurantDto(
-                r.getId(),
-                r.getCategory() != null
-                        ? r.getCategory().getId()
-                        : null,
-                r.getUser() != null
-                        ? r.getUser().getId()
-                        : null,
-                r.getRestaurantName(),
-                r.getDescription(),
-                r.getStreet(),
-                r.getHouseNumber(),
-                r.getApartmentNumber(),
-                r.getPostalCode(),
-                r.getCity(),
-                r.getImagePath(),
-                r.getIsApproved(),
-                null
-        );
+    private RestaurantDto toDto(Restaurant r) {
+        RestaurantDto dto = new RestaurantDto();
+        dto.setIdRestaurant(r.getId());
+        dto.setRestaurantCategoryId(r.getCategory() != null ? r.getCategory().getId() : null);
+        dto.setUserId(r.getUser() != null ? r.getUser().getId() : null);
+        dto.setRestaurantName(r.getRestaurantName());
+        dto.setDescription(r.getDescription());
+        dto.setStreet(r.getStreet());
+        dto.setHouseNumber(r.getHouseNumber());
+        dto.setApartmentNumber(r.getApartmentNumber());
+        dto.setPostalCode(r.getPostalCode());
+        dto.setCity(r.getCity());
+        dto.setImagePath(r.getImagePath());
+        dto.setIsApproved(r.getIsApproved());
+        dto.setDeliveryPrice(r.getDeliveryPrice());
+        dto.setFreeDeliveryFrom(r.getFreeDeliveryFrom());
+        dto.setMinOrderAmount(r.getMinOrderAmount());
+        dto.setOpenFrom(timeToString(r.getOpenFrom()));
+        dto.setOpenTo(timeToString(r.getOpenTo()));
+        dto.setDeliveryFrom(timeToString(r.getDeliveryFrom()));
+        dto.setDeliveryTo(timeToString(r.getDeliveryTo()));
+        dto.setPickupAvailable(r.getPickupAvailable());
+        return dto;
     }
 }

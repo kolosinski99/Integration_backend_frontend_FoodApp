@@ -33,4 +33,9 @@ public class MenuProductDto {
 
     @JsonProperty("image_path")
     private String imagePath;
+
+    @JsonProperty("spice_level")
+    private Integer spiceLevel;
+
+    private String allergens;
 }

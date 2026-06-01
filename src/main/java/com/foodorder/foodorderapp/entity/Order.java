@@ -50,6 +50,9 @@ public class Order {
     @Column(name = "restaurant_comment")
     private String restaurantComment;
 
+    @Column(name = "estimated_minutes")
+    private Integer estimatedMinutes;
+
     @OneToMany(
             mappedBy = "order",
             cascade = CascadeType.ALL,

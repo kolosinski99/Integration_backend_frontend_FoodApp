@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -174,7 +175,31 @@ public class RestaurantController {
                     value = "image",
                     required = false
             )
-            MultipartFile image
+            MultipartFile image,
+
+            @RequestParam(value = "delivery_price", required = false)
+            BigDecimal deliveryPrice,
+
+            @RequestParam(value = "free_delivery_from", required = false)
+            BigDecimal freeDeliveryFrom,
+
+            @RequestParam(value = "min_order_amount", required = false)
+            BigDecimal minOrderAmount,
+
+            @RequestParam(value = "open_from", required = false)
+            String openFrom,
+
+            @RequestParam(value = "open_to", required = false)
+            String openTo,
+
+            @RequestParam(value = "delivery_from", required = false)
+            String deliveryFrom,
+
+            @RequestParam(value = "delivery_to", required = false)
+            String deliveryTo,
+
+            @RequestParam(value = "pickup_available", required = false)
+            Integer pickupAvailable
     ) {
 
         return restaurantService.update(
@@ -188,7 +213,15 @@ public class RestaurantController {
                 apartmentNumber,
                 postalCode,
                 city,
-                image
+                image,
+                deliveryPrice,
+                freeDeliveryFrom,
+                minOrderAmount,
+                openFrom,
+                openTo,
+                deliveryFrom,
+                deliveryTo,
+                pickupAvailable
         );
     }
 

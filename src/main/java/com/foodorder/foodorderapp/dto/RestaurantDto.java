@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,4 +49,28 @@ public class RestaurantDto {
 
     @JsonProperty("generated_password")
     private String generatedPassword;
+
+    @JsonProperty("delivery_price")
+    private BigDecimal deliveryPrice;
+
+    @JsonProperty("free_delivery_from")
+    private BigDecimal freeDeliveryFrom;
+
+    @JsonProperty("min_order_amount")
+    private BigDecimal minOrderAmount;
+
+    @JsonProperty("open_from")
+    private String openFrom;
+
+    @JsonProperty("open_to")
+    private String openTo;
+
+    @JsonProperty("delivery_from")
+    private String deliveryFrom;
+
+    @JsonProperty("delivery_to")
+    private String deliveryTo;
+
+    @JsonProperty("pickup_available")
+    private Integer pickupAvailable;
 }
