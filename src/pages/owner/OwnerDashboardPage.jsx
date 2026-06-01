@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { getMyRestaurant } from '../../api/restaurantApi';
 import { getRestaurantOrders } from '../../api/orderApi';
 import Spinner from '../../components/Spinner';
@@ -17,6 +18,9 @@ const OwnerDashboardPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.successMessage;
+
+  const { user } = useAuth();
+  const ownerName = user?.name || user?.firstName || '';
 
   const [restaurant, setRestaurant] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +94,9 @@ const OwnerDashboardPage = () => {
   return (
     <div>
       <SuccessBanner message={successMessage} />
-      <h1 className={styles.title}>Mój panel</h1>
+      <h1 className={styles.title}>
+        {ownerName ? `Witaj, ${ownerName}!` : 'Mój panel'}
+      </h1>
       {hasNoRestaurant ? (
         <div className={styles.emptyState}>
           <p>Nie masz jeszcze restauracji.</p>

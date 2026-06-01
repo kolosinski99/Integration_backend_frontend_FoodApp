@@ -4,17 +4,17 @@ const useMock = false;
 
 const mockProfileStore = {
   profile: {
-    name: 'Jan',
-    surname: 'Kowalski',
-    login: 'jan@test.com',
-    role: 'USER',
+    name: '',
+    surname: '',
+    login: '',
+    role: '',
     address: {
       id_address: 1,
-      street: 'ul. Marszałkowska',
-      house_number: '10',
-      apartment_number: '5',
-      postal_code: '00-001',
-      city: 'Warszawa',
+      street: '',
+      house_number: '',
+      apartment_number: '',
+      postal_code: '',
+      city: '',
     },
   },
 };

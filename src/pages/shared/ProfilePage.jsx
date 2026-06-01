@@ -49,8 +49,18 @@ const ProfilePage = () => {
     setLoadError(null);
     try {
       const res = await getMyProfile();
-      setProfile(res.data);
-      setForm(toFormShape(res.data));
+      const fetched = res.data || {};
+
+      const merged = {
+        ...fetched,
+        name: fetched.name || user?.name || user?.firstName || '',
+        surname: fetched.surname || user?.surname || '',
+        login: fetched.login || fetched.email || user?.email || user?.login || '',
+        role: fetched.role || user?.role || '',
+      };
+
+      setProfile(merged);
+      setForm(toFormShape(merged));
     } catch {
       setLoadError('Nie udało się załadować danych profilu.');
     } finally {
@@ -340,11 +350,11 @@ const ProfilePage = () => {
           <h2 className={styles.sectionTitle}>Dane osobowe</h2>
           <div className={styles.row}>
             <span className={styles.fieldLabel}>Imię</span>
-            <span className={styles.value}>{profile.name || '—'}</span>
+            <span className={styles.readonlyValue}>{profile.name || '—'}</span>
           </div>
           <div className={styles.row}>
             <span className={styles.fieldLabel}>Nazwisko</span>
-            <span className={styles.value}>{profile.surname || '—'}</span>
+            <span className={styles.readonlyValue}>{profile.surname || '—'}</span>
           </div>
 
           <h2 className={styles.sectionTitle}>Adres</h2>
