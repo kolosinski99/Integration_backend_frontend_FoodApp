@@ -27,6 +27,7 @@ const OwnerOrdersPage = () => {
   const [error, setError] = useState(null);
   const [updatingId, setUpdatingId] = useState(null);
   const [activeTab, setActiveTab] = useState('active');
+  const [estimatedMinutes, setEstimatedMinutes] = useState({});
 
   const tabCounts = useMemo(() => ({
     active: orders.filter((o) =>
@@ -65,12 +66,20 @@ const OwnerOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const changeStatus = async (orderId, statusName) => {
+  const changeStatus = async (orderId, statusName, minutes = null) => {
     setUpdatingId(orderId);
     try {
-      await updateOrderStatus(orderId, statusName);
+      const res = await updateOrderStatus(orderId, statusName, minutes);
       setOrders((prev) =>
-        prev.map((o) => (o.id_order === orderId ? { ...o, status_name: statusName } : o))
+        prev.map((o) =>
+          o.id_order === orderId
+            ? {
+                ...o,
+                status_name: res.data.status_name,
+                estimated_minutes: res.data.estimated_minutes,
+              }
+            : o
+        )
       );
     } catch {
       setError('Nie udało się zmienić statusu zamówienia.');
@@ -169,24 +178,55 @@ const OwnerOrdersPage = () => {
                   <span className={styles.total}>{formatPrice(order.total_price)}</span>
                 </div>
 
-                {(isNew || isProgress) && (
+                {isNew && (
+                  <div className={styles.estimateRow}>
+                    <input
+                      type="number"
+                      min="5"
+                      max="180"
+                      step="5"
+                      placeholder="Czas (np. 30)"
+                      value={estimatedMinutes[order.id_order] || ''}
+                      onChange={e =>
+                        setEstimatedMinutes(prev => ({
+                          ...prev,
+                          [order.id_order]: e.target.value,
+                        }))
+                      }
+                      className={styles.estimateInput}
+                    />
+                    <span className={styles.estimateUnit}>min</span>
+                    <Button
+                      disabled={busy}
+                      onClick={() =>
+                        changeStatus(
+                          order.id_order,
+                          'IN_PROGRESS',
+                          Number(estimatedMinutes[order.id_order]) || null
+                        )
+                      }
+                    >
+                      Przyjmij
+                    </Button>
+                    <button
+                      type="button"
+                      className={styles.cancelButton}
+                      disabled={busy}
+                      onClick={() => changeStatus(order.id_order, 'CANCELLED')}
+                    >
+                      Anuluj
+                    </button>
+                  </div>
+                )}
+
+                {isProgress && (
                   <div className={styles.actions}>
-                    {isNew && (
-                      <Button
-                        disabled={busy}
-                        onClick={() => changeStatus(order.id_order, 'IN_PROGRESS')}
-                      >
-                        Przyjmij
-                      </Button>
-                    )}
-                    {isProgress && (
-                      <Button
-                        disabled={busy}
-                        onClick={() => changeStatus(order.id_order, 'COMPLETED')}
-                      >
-                        Zrealizuj
-                      </Button>
-                    )}
+                    <Button
+                      disabled={busy}
+                      onClick={() => changeStatus(order.id_order, 'COMPLETED')}
+                    >
+                      Zrealizuj
+                    </Button>
                     <button
                       type="button"
                       className={styles.cancelButton}

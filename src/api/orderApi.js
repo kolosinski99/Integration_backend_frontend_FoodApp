@@ -192,10 +192,13 @@ export const getMyOrders = () =>
 export const getRestaurantOrders = () =>
   useMock ? mockGetRestaurantOrders() : axiosInstance.get('/orders/restaurant');
 
-export const updateOrderStatus = (orderId, statusName) =>
-  useMock
-    ? mockUpdateOrderStatus(orderId, statusName)
-    : axiosInstance.patch(`/orders/${orderId}/status`, { status_name: statusName });
+export const updateOrderStatus = (orderId, statusName, minutes = null) => {
+  const payload = { status_name: statusName };
+  if (minutes != null) payload.estimated_minutes = minutes;
+
+  if (useMock) return mockUpdateOrderStatus(orderId, statusName);
+  return axiosInstance.patch(`/orders/${orderId}/status`, payload);
+};
 
 export const getPaymentMethods = () =>
   useMock ? mockGetPaymentMethods() : axiosInstance.get('/payment-methods');

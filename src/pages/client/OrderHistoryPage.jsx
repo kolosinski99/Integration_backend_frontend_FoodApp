@@ -139,6 +139,13 @@ const OrderHistoryPage = () => {
                   <span>Razem</span>
                   <span className={styles.total}>{formatPrice(order.total_price)}</span>
                 </div>
+
+                {order.status_name === 'IN_PROGRESS' &&
+                  order.estimated_minutes && (
+                  <p className={styles.estimated}>
+                    ⏱ Szacowany czas realizacji: {order.estimated_minutes} min
+                  </p>
+                )}
               </div>
             );
           })}
