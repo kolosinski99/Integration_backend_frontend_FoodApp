@@ -126,6 +126,9 @@ const OwnerDashboardPage = () => {
               <span className={styles.orderBadge}>{activeOrderCount}</span>
             )}
           </Button>
+          <Button variant="secondary" onClick={() => navigate('/owner/report')}>
+            Raport sprzedaży
+          </Button>
         </div>
       )}
     </div>

@@ -202,3 +202,19 @@ export const updateOrderStatus = (orderId, statusName, minutes = null) => {
 
 export const getPaymentMethods = () =>
   useMock ? mockGetPaymentMethods() : axiosInstance.get('/payment-methods');
+
+const mockReport = {
+  total_revenue: 1847.5,
+  total_orders: 42,
+  top_products: [
+    { product_name: 'Pizza Margherita', quantity_sold: 28, revenue: 923.72 },
+    { product_name: 'Pizza Pepperoni', quantity_sold: 19, revenue: 759.81 },
+    { product_name: 'Tiramisu', quantity_sold: 14, revenue: 279.72 },
+    { product_name: 'Woda gazowana', quantity_sold: 31, revenue: 154.69 },
+  ],
+};
+
+export const getOwnerSalesReport = () =>
+  useMock
+    ? Promise.resolve({ data: mockReport })
+    : axiosInstance.get('/orders/report');

@@ -2,6 +2,7 @@ package com.foodorder.foodorderapp.controller;
 
 import com.foodorder.foodorderapp.dto.CreateOrderRequest;
 import com.foodorder.foodorderapp.dto.OrderDto;
+import com.foodorder.foodorderapp.dto.SalesReportDto;
 import com.foodorder.foodorderapp.dto.UpdateOrderStatusRequest;
 import com.foodorder.foodorderapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,11 @@ public class OrderController {
     @GetMapping("/api/orders/restaurant")
     public List<OrderDto> restaurantOrders(Authentication auth) {
         return orderService.getRestaurantOrders(auth.getName());
+    }
+
+    @GetMapping("/api/orders/report")
+    public SalesReportDto salesReport(Authentication auth) {
+        return orderService.getSalesReport(auth.getName());
     }
 
     @PatchMapping("/api/orders/{id}/status")

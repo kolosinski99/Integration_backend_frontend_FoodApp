@@ -5,6 +5,7 @@ import com.foodorder.foodorderapp.dto.NewAddressDto;
 import com.foodorder.foodorderapp.dto.OrderDto;
 import com.foodorder.foodorderapp.dto.OrderItemDto;
 import com.foodorder.foodorderapp.dto.OrderItemRequest;
+import com.foodorder.foodorderapp.dto.SalesReportDto;
 import com.foodorder.foodorderapp.entity.*;
 import com.foodorder.foodorderapp.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -163,6 +167,70 @@ public class OrderService {
 
         order.setStatus(status);
         return toDto(orderRepository.save(order));
+    }
+
+    public SalesReportDto getSalesReport(String userLogin) {
+        User user = userRepository.findByLogin(userLogin)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Brak użytkownika"));
+
+        Restaurant restaurant = restaurantRepository
+                .findByUser(user)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Brak restauracji"));
+
+        List<Order> completedOrders = orderRepository
+                .findByRestaurant(restaurant)
+                .stream()
+                .filter(o -> "COMPLETED".equals(
+                        o.getStatus() != null
+                                ? o.getStatus().getStatusName() : ""))
+                .toList();
+
+        BigDecimal totalRevenue = completedOrders.stream()
+                .flatMap(o -> o.getItems() != null
+                        ? o.getItems().stream() : Stream.empty())
+                .map(i -> i.getItemPrice()
+                        .multiply(BigDecimal.valueOf(i.getItemQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Agregacja po nazwie produktu
+        Map<String, int[]> productStats = new LinkedHashMap<>();
+        Map<String, BigDecimal> productRevenue = new LinkedHashMap<>();
+
+        completedOrders.forEach(order -> {
+            if (order.getItems() == null) return;
+            order.getItems().forEach(item -> {
+                String name = item.getMenuProduct() != null
+                        ? item.getMenuProduct().getProductName()
+                        : "Nieznane";
+                productStats.merge(name,
+                        new int[]{item.getItemQuantity()},
+                        (a, b) -> new int[]{a[0] + b[0]});
+                productRevenue.merge(name,
+                        item.getItemPrice().multiply(
+                                BigDecimal.valueOf(item.getItemQuantity())),
+                        BigDecimal::add);
+            });
+        });
+
+        List<SalesReportDto.TopProductDto> topProducts =
+                productStats.entrySet().stream()
+                        .sorted((a, b) ->
+                                Integer.compare(b.getValue()[0], a.getValue()[0]))
+                        .limit(10)
+                        .map(e -> new SalesReportDto.TopProductDto(
+                                e.getKey(),
+                                e.getValue()[0],
+                                productRevenue.get(e.getKey())
+                        ))
+                        .toList();
+
+        return new SalesReportDto(
+                totalRevenue,
+                completedOrders.size(),
+                topProducts
+        );
     }
 
     private OrderDto toDto(Order order) {
