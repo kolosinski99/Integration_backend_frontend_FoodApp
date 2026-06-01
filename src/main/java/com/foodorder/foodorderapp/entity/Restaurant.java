@@ -28,6 +28,7 @@ public class Restaurant {
     @Column(name = "restaurant_name")
     private String restaurantName;
 
+    @Column(name = "description", length = 500)
     private String description;
 
     private String street;
