@@ -79,8 +79,16 @@ const MenuPage = () => {
     <div>
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>{restaurant?.name || 'Menu'}</h1>
-          {restaurant?.address && <p className={styles.address}>{restaurant.address}</p>}
+          <h1 className={styles.title}>
+            {restaurant?.restaurant_name || 'Menu'}
+          </h1>
+          {(restaurant?.street || restaurant?.city) && (
+            <p className={styles.address}>
+              {[restaurant.street, restaurant.house_number]
+                .filter(Boolean).join(' ')}
+              {restaurant.city ? `, ${restaurant.city}` : ''}
+            </p>
+          )}
         </div>
         <Link to={`/restaurants/${id}`} className={styles.backLink}>
           ← Wróć do restauracji

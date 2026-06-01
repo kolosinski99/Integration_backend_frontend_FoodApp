@@ -51,16 +51,6 @@ const RestaurantCard = ({
           : `http://localhost:8080/uploads/${restaurant.image_path}`
       : null;
 
-  console.log(
-      'RESTAURANT:',
-      restaurant
-  );
-
-  console.log(
-      'IMAGE URL:',
-      imageUrl
-  );
-
   const handleKeyDown = (e) => {
 
     if (
@@ -93,12 +83,6 @@ const RestaurantCard = ({
                   alt={restaurant.restaurant_name}
                   className={styles.image}
                   onError={(e) => {
-
-                    console.log(
-                        'BŁĄD ŁADOWANIA OBRAZU:',
-                        imageUrl
-                    );
-
                     e.target.style.display =
                         'none';
                   }}
