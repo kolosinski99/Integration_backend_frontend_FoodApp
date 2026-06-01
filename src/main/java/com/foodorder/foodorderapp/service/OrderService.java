@@ -104,22 +104,17 @@ public class OrderService {
                             HttpStatus.BAD_REQUEST,
                             "Danie " + itemReq.getMenuProductId() + " nie istnieje"));
 
-            OrderItemId itemId = new OrderItemId();
-            itemId.setOrderId(saved.getId());
-            itemId.setMenuProductId(product.getId());
-
             OrderItem item = new OrderItem();
-            item.setId(itemId);
+            item.setId(new OrderItemId());
             item.setOrder(saved);
             item.setMenuProduct(product);
             item.setItemQuantity(itemReq.getQuantity());
             item.setItemPrice(product.getPrice());
-            orderItemRepository.save(item);
             orderItems.add(item);
         }
 
         saved.setItems(orderItems);
-        return toDto(saved);
+        return toDto(orderRepository.save(saved));
     }
 
     public List<OrderDto> getMyOrders(String userLogin) {
