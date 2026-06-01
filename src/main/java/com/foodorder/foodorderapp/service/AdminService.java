@@ -54,7 +54,8 @@ public class AdminService {
                 r.getPostalCode(),
                 r.getCity(),
                 r.getImagePath(),
-                r.getIsApproved()
+                r.getIsApproved(),
+                null
         );
     }
 }

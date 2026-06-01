@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   submitPartnerApplication,
   getRestaurantCategories
@@ -51,6 +51,8 @@ const formatPostalCode = (raw) => {
 
 const PartnerApplicationPage = () => {
 
+  const navigate = useNavigate();
+
   const [form, setForm] = useState(initialForm);
 
   const [categories, setCategories] = useState([]);
@@ -65,7 +67,7 @@ const PartnerApplicationPage = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const [submittedEmail, setSubmittedEmail] = useState(null);
+  const [successData, setSuccessData] = useState(null);
 
   useEffect(() => {
 
@@ -390,9 +392,12 @@ const PartnerApplicationPage = () => {
         );
       }
 
-      await submitPartnerApplication(formData);
+      const result = await submitPartnerApplication(formData);
 
-      setSubmittedEmail(form.owner_email);
+      setSuccessData({
+        email: form.owner_email,
+        password: result.data?.generated_password || null,
+      });
 
     } catch {
 
@@ -406,30 +411,41 @@ const PartnerApplicationPage = () => {
     }
   };
 
-  if (submittedEmail) {
+  if (successData) {
 
     return (
-        <div className={styles.confirmation}>
+        <div className={styles.successBox}>
 
-          <h1 className={styles.confirmationTitle}>
-            Zgłoszenie zostało wysłane!
-          </h1>
+          <h2>Zgłoszenie przyjęte!</h2>
 
           <p>
-            Dziękujemy za zainteresowanie współpracą.
-            Skontaktujemy się z Tobą pod adresem{' '}
-            <strong>{submittedEmail}</strong>{' '}
-            w ciągu 2 dni roboczych.
+            Twoje konto zostało utworzone dla adresu{' '}
+            <strong>{successData.email}</strong>.
           </p>
 
-          <Link
-              to="/"
-              className={styles.homeLink}
-          >
-            <Button>
-              Wróć na stronę główną
-            </Button>
-          </Link>
+          {successData.password && (
+              <div className={styles.passwordBox}>
+                <p className={styles.passwordLabel}>
+                  Twoje tymczasowe hasło:
+                </p>
+                <code className={styles.passwordValue}>
+                  {successData.password}
+                </code>
+                <p className={styles.passwordHint}>
+                  Zapisz to hasło — nie zostanie pokazane ponownie.
+                  Po zalogowaniu zmień je w ustawieniach profilu.
+                </p>
+              </div>
+          )}
+
+          <p>
+            Twoja restauracja czeka na zatwierdzenie przez administratora.
+            Po zatwierdzeniu będzie widoczna dla klientów.
+          </p>
+
+          <button onClick={() => navigate('/login')}>
+            Przejdź do logowania
+          </button>
 
         </div>
     );

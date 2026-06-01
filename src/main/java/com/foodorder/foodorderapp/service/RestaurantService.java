@@ -180,12 +180,9 @@ public class RestaurantService {
 
         restaurantRepository.save(r);
 
-        System.out.println(
-                "NOWE HASŁO OWNERA: "
-                        + generatedPassword
-        );
-
-        return toDto(r);
+        RestaurantDto dto = toDto(r);
+        dto.setGeneratedPassword(generatedPassword);
+        return dto;
     }
 
     public RestaurantDto update(
@@ -323,7 +320,8 @@ public class RestaurantService {
                 r.getPostalCode(),
                 r.getCity(),
                 r.getImagePath(),
-                r.getIsApproved()
+                r.getIsApproved(),
+                null
         );
     }
 }

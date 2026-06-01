@@ -44,4 +44,7 @@ public class RestaurantDto {
 
     @JsonProperty("is_approved")
     private Integer isApproved;
+
+    @JsonProperty("generated_password")
+    private String generatedPassword;
 }
