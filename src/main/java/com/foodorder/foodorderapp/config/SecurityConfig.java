@@ -1,6 +1,7 @@
 package com.foodorder.foodorderapp.config;
 
 import com.foodorder.foodorderapp.security.JwtAuthenticationFilter;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,11 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        .dispatcherTypeMatchers(
+                                DispatcherType.ERROR,
+                                DispatcherType.ASYNC
+                        ).permitAll()
 
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
