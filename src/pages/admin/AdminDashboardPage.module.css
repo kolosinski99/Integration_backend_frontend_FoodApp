@@ -1,5 +1,14 @@
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .title {
-  margin: 0 0 20px;
+  margin: 0;
   font-size: 26px;
   color: #222;
 }

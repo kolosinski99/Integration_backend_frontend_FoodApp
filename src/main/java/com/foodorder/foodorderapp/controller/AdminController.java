@@ -1,5 +1,6 @@
 package com.foodorder.foodorderapp.controller;
 
+import com.foodorder.foodorderapp.dto.AdminCreateRestaurantRequest;
 import com.foodorder.foodorderapp.dto.AdminRestaurantDetailDto;
 import com.foodorder.foodorderapp.dto.OrderDto;
 import com.foodorder.foodorderapp.dto.RestaurantDto;
@@ -28,6 +29,12 @@ public class AdminController {
     @GetMapping("/api/admin/orders")
     public List<OrderDto> allOrders() {
         return adminService.getAllOrders();
+    }
+
+    @PostMapping("/api/admin/restaurants")
+    public RestaurantDto createRestaurant(
+            @RequestBody AdminCreateRestaurantRequest request) {
+        return adminService.createRestaurantByAdmin(request);
     }
 
     @PatchMapping("/api/admin/restaurants/{id}/approve")

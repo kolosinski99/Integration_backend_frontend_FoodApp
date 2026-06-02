@@ -1,5 +1,6 @@
 package com.foodorder.foodorderapp.service;
 
+import com.foodorder.foodorderapp.dto.AdminCreateRestaurantRequest;
 import com.foodorder.foodorderapp.dto.AdminRestaurantDetailDto;
 import com.foodorder.foodorderapp.dto.MenuProductDto;
 import com.foodorder.foodorderapp.dto.OrderDto;
@@ -32,6 +33,7 @@ public class AdminService {
     private final ClientRepository clientRepository;
     private final MenuProductRepository menuProductRepository;
     private final OrderRepository orderRepository;
+    private final RestaurantService restaurantService;
 
     public AdminRestaurantDetailDto getRestaurantDetail(Integer id) {
         Restaurant r = restaurantRepository.findById(id)
@@ -106,6 +108,31 @@ public class AdminService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Restauracja nie istnieje"));
         r.setIsApproved(0);
+        return toDto(restaurantRepository.save(r));
+    }
+
+    public RestaurantDto createRestaurantByAdmin(
+            AdminCreateRestaurantRequest request) {
+
+        RestaurantDto dto = restaurantService.create(
+                request.getOwnerFirstName(),
+                request.getOwnerLastName(),
+                request.getOwnerEmail(),
+                "",
+                request.getRestaurantName(),
+                request.getDescription(),
+                request.getRestaurantCategoryId(),
+                request.getStreet(),
+                request.getHouseNumber(),
+                request.getApartmentNumber(),
+                request.getPostalCode(),
+                request.getCity(),
+                null
+        );
+
+        Restaurant r = restaurantRepository.findById(dto.getIdRestaurant())
+                .orElseThrow();
+        r.setIsApproved(1);
         return toDto(restaurantRepository.save(r));
     }
 

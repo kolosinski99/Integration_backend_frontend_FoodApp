@@ -169,3 +169,24 @@ export const getAdminOrders = () =>
   useMock
     ? Promise.resolve({ data: mockOrders })
     : axiosInstance.get('/admin/orders');
+
+export const createAdminRestaurant = (data) =>
+  useMock
+    ? (async () => {
+        await delay();
+        const newId = Date.now();
+        const r = {
+          id_restaurant: newId,
+          restaurant_name: data.restaurant_name,
+          street: data.street,
+          house_number: data.house_number,
+          city: data.city,
+          is_approved: 1,
+          owner_name: data.owner_first_name,
+          owner_surname: data.owner_last_name,
+          owner_login: data.owner_email,
+        };
+        store.restaurants.push(r);
+        return { data: r };
+      })()
+    : axiosInstance.post('/admin/restaurants', data);

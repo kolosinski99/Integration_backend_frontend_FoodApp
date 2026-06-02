@@ -14,6 +14,7 @@ import MenuItemFormPage from '../pages/owner/MenuItemFormPage';
 import OwnerOrdersPage from '../pages/owner/OwnerOrdersPage';
 import OwnerReportPage from '../pages/owner/OwnerReportPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
+import AdminRestaurantFormPage from '../pages/admin/AdminRestaurantFormPage';
 import PartnerApplicationPage from '../pages/public/PartnerApplicationPage';
 import CartPage from '../pages/client/CartPage';
 import OrderHistoryPage from '../pages/client/OrderHistoryPage';
@@ -157,6 +158,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute allowedRoles={['ADMIN']}>
           <AdminDashboardPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/admin/restaurants/new"
+      element={
+        <ProtectedRoute allowedRoles={['ADMIN']}>
+          <AdminRestaurantFormPage />
         </ProtectedRoute>
       }
     />

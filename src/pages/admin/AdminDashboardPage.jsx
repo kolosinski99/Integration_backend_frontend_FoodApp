@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getAdminRestaurants,
   approveRestaurant,
@@ -11,6 +12,7 @@ import Button from '../../components/Button';
 import styles from './AdminDashboardPage.module.css';
 
 const AdminDashboardPage = () => {
+  const navigate = useNavigate();
   const [restaurants, setRestaurants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -122,7 +124,12 @@ const AdminDashboardPage = () => {
 
   return (
     <div>
-      <h1 className={styles.title}>Panel admina</h1>
+      <div className={styles.headerRow}>
+        <h1 className={styles.title}>Panel admina</h1>
+        <Button onClick={() => navigate('/admin/restaurants/new')}>
+          + Dodaj restaurację
+        </Button>
+      </div>
 
       <div className={styles.tabs}>
         <button
