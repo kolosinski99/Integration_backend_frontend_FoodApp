@@ -1,8 +1,11 @@
-.page { max-width: 720px; margin: 0 auto; }
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+}
 
 .title {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #222;
   margin: 0 0 24px;
 }
@@ -43,6 +46,10 @@
   margin: 0 0 14px;
 }
 
+.tableWrapper {
+  overflow-x: auto;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -60,6 +67,7 @@
   color: #888;
   padding: 10px 16px;
   text-align: left;
+  font-weight: 600;
 }
 
 .table td {
@@ -70,11 +78,21 @@
 }
 
 .rank { color: #aaa; font-weight: 600; }
+.qty  { font-weight: 600; color: #222; }
+.rev  { font-weight: 700; color: #ef6c00; }
 
-.qty { font-weight: 600; color: #222; }
+.empty {
+  color: #aaa;
+  font-size: 14px;
+  padding: 20px 0;
+}
 
-.rev { font-weight: 700; color: #ef6c00; }
-
-.error { color: #e24b4a; padding: 20px; }
-
-.empty { color: #aaa; font-size: 14px; }
+.errorBox {
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  color: #b71c1c;
+}
