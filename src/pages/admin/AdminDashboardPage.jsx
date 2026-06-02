@@ -4,6 +4,7 @@ import {
   approveRestaurant,
   rejectRestaurant,
   getAdminRestaurantDetail,
+  getAdminOrders,
 } from '../../api/adminApi';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
@@ -18,6 +19,9 @@ const AdminDashboardPage = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [detail, setDetail] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState(null);
 
   const fetchRestaurants = async () => {
     setIsLoading(true);
@@ -92,6 +96,17 @@ const AdminDashboardPage = () => {
     setDetail(null);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'orders' && orders.length === 0) {
+      setOrdersLoading(true);
+      getAdminOrders()
+        .then((res) => setOrders(Array.isArray(res.data) ? res.data : []))
+        .catch(() => {})
+        .finally(() => setOrdersLoading(false));
+    }
+  };
+
   if (isLoading) return <Spinner />;
 
   if (error) {
@@ -113,20 +128,28 @@ const AdminDashboardPage = () => {
         <button
           type="button"
           className={`${styles.tab} ${activeTab === 'pending' ? styles.tabActive : ''}`}
-          onClick={() => setActiveTab('pending')}
+          onClick={() => handleTabChange('pending')}
         >
           Oczekujące na zatwierdzenie ({pending.length})
         </button>
         <button
           type="button"
           className={`${styles.tab} ${activeTab === 'approved' ? styles.tabActive : ''}`}
-          onClick={() => setActiveTab('approved')}
+          onClick={() => handleTabChange('approved')}
         >
           Zatwierdzone ({approved.length})
         </button>
+        <button
+          type="button"
+          className={`${styles.tab} ${activeTab === 'orders' ? styles.tabActive : ''}`}
+          onClick={() => handleTabChange('orders')}
+        >
+          Wszystkie zamówienia
+        </button>
       </div>
 
-      {list.length === 0 ? (
+      {activeTab !== 'orders' &&
+        (list.length === 0 ? (
         <p className={styles.empty}>
           {activeTab === 'pending'
             ? 'Brak restauracji oczekujących na zatwierdzenie. Wszystko sprawdzone!'
@@ -189,6 +212,92 @@ const AdminDashboardPage = () => {
               })}
             </tbody>
           </table>
+        </div>
+      ))}
+
+      {activeTab === 'orders' && (
+        <div className={styles.ordersSection}>
+          {ordersLoading ? (
+            <Spinner />
+          ) : orders.length === 0 ? (
+            <p className={styles.empty}>Brak zamówień w systemie.</p>
+          ) : (
+            orders.map((order) => {
+              const STATUS_COLORS = {
+                NEW: styles.badgePending,
+                IN_PROGRESS: styles.badgeProgress,
+                COMPLETED: styles.badgeApproved,
+                CANCELLED: styles.badgeCancelled,
+              };
+              const STATUS_LABELS = {
+                NEW: 'Nowe',
+                IN_PROGRESS: 'W realizacji',
+                COMPLETED: 'Zrealizowane',
+                CANCELLED: 'Anulowane',
+              };
+              const isExpanded = expandedOrder === order.id_order;
+              const d = new Date(order.create_date);
+              const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+              return (
+                <div key={order.id_order} className={styles.orderCard}>
+                  <div className={styles.orderHeader}>
+                    <div className={styles.orderMeta}>
+                      <span className={styles.orderId}>#{order.id_order}</span>
+                      <span className={styles.orderRestaurant}>
+                        {order.restaurant_name}
+                      </span>
+                      <span
+                        className={`${styles.badge} ${STATUS_COLORS[order.status_name] || ''}`}
+                      >
+                        {STATUS_LABELS[order.status_name] || order.status_name}
+                      </span>
+                    </div>
+                    <div className={styles.orderRight}>
+                      <span className={styles.orderDate}>{dateStr}</span>
+                      <span className={styles.orderTotal}>
+                        {Number(order.total_price).toFixed(2)} zł
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.expandBtn}
+                        onClick={() =>
+                          setExpandedOrder(isExpanded ? null : order.id_order)
+                        }
+                      >
+                        {isExpanded ? 'Zwiń ▲' : 'Szczegóły ▼'}
+                      </button>
+                    </div>
+                  </div>
+                  {isExpanded && (
+                    <div className={styles.orderDetails}>
+                      {order.items && order.items.length > 0 ? (
+                        <ul className={styles.orderItems}>
+                          {order.items.map((it, idx) => (
+                            <li key={idx}>
+                              <span>
+                                {it.product_name} × {it.quantity}
+                              </span>
+                              <span>
+                                {Number(it.item_price * it.quantity).toFixed(2)} zł
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className={styles.noItems}>Brak pozycji.</p>
+                      )}
+                      {order.client_comment && (
+                        <p className={styles.comment}>
+                          Uwagi: {order.client_comment}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       )}
 

@@ -16,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     List<Order> findByRestaurantOrderByCreateDateDesc(Restaurant restaurant);
 
     List<Order> findByClientOrderByCreateDateDesc(Client client);
+
+    List<Order> findAllByOrderByCreateDateDesc();
 }

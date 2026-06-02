@@ -87,6 +87,121 @@
   color: #2e7d32;
 }
 
+.badgeProgress {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.badgeCancelled {
+  background: #fdecea;
+  color: #b71c1c;
+}
+
+.ordersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.orderCard {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.orderHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.orderMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.orderId {
+  font-size: 13px;
+  font-weight: 700;
+  color: #666;
+}
+
+.orderRestaurant {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+.orderRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.orderDate {
+  font-size: 13px;
+  color: #888;
+}
+
+.orderTotal {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ef6c00;
+}
+
+.expandBtn {
+  background: none;
+  border: none;
+  color: #ef6c00;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.orderDetails {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.orderItems {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orderItems li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #444;
+}
+
+.noItems {
+  font-size: 13px;
+  color: #aaa;
+  margin: 0;
+}
+
+.comment {
+  font-size: 13px;
+  color: #666;
+  margin: 6px 0 0;
+  font-style: italic;
+}
+
 .actionsCol {
   width: 1%;
   white-space: nowrap;

@@ -130,3 +130,42 @@ export const getAdminRestaurantDetail = (id) => {
   }
   return axiosInstance.get(`/admin/restaurants/${id}`);
 };
+
+const mockOrders = [
+  {
+    id_order: 1001,
+    restaurant_name: 'Pizza House',
+    status_name: 'COMPLETED',
+    create_date: '2026-06-01T12:30:00',
+    total_price: 65.98,
+    client_comment: null,
+    items: [
+      { product_name: 'Pizza Margherita', quantity: 2, item_price: 32.99 },
+    ],
+  },
+  {
+    id_order: 1002,
+    restaurant_name: 'Pizza House',
+    status_name: 'NEW',
+    create_date: '2026-06-02T09:15:00',
+    total_price: 39.99,
+    client_comment: 'Bez cebuli',
+    items: [
+      { product_name: 'Pizza Pepperoni', quantity: 1, item_price: 39.99 },
+    ],
+  },
+  {
+    id_order: 1003,
+    restaurant_name: 'Vege Life',
+    status_name: 'CANCELLED',
+    create_date: '2026-06-01T18:00:00',
+    total_price: 28.50,
+    client_comment: null,
+    items: [],
+  },
+];
+
+export const getAdminOrders = () =>
+  useMock
+    ? Promise.resolve({ data: mockOrders })
+    : axiosInstance.get('/admin/orders');
