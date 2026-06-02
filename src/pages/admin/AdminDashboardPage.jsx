@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   getAdminRestaurants,
   approveRestaurant,
@@ -9,10 +9,13 @@ import {
 } from '../../api/adminApi';
 import Spinner from '../../components/Spinner';
 import Button from '../../components/Button';
+import SuccessBanner from '../../components/SuccessBanner';
 import styles from './AdminDashboardPage.module.css';
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const successMessage = location.state?.successMessage;
   const [restaurants, setRestaurants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,6 +44,16 @@ const AdminDashboardPage = () => {
   useEffect(() => {
     fetchRestaurants();
   }, []);
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [successMessage, navigate, location.pathname]);
 
   const pending = useMemo(
     () => restaurants.filter((r) => r.is_approved === 0),
@@ -124,6 +137,7 @@ const AdminDashboardPage = () => {
 
   return (
     <div>
+      <SuccessBanner message={successMessage} />
       <div className={styles.headerRow}>
         <h1 className={styles.title}>Panel admina</h1>
         <Button onClick={() => navigate('/admin/restaurants/new')}>
