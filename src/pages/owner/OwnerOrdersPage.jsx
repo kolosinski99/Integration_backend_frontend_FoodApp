@@ -173,6 +173,12 @@ const OwnerOrdersPage = () => {
                   <p className={styles.comment}>Uwagi klienta: {order.client_comment}</p>
                 )}
 
+                {order.estimated_minutes && (
+                  <p className={styles.estimatedTime}>
+                    Szacowany czas realizacji: {order.estimated_minutes} min
+                  </p>
+                )}
+
                 <div className={styles.footer}>
                   <span>Razem</span>
                   <span className={styles.total}>{formatPrice(order.total_price)}</span>

@@ -213,3 +213,10 @@
   color: #666;
   white-space: nowrap;
 }
+
+.estimatedTime {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ef6c00;
+}
