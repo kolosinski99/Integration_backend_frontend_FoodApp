@@ -1,8 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { createOrder, getPaymentMethods } from '../../api/orderApi';
+import { getRestaurantById } from '../../api/restaurantApi';
+import {
+  calculateDeliveryRoute,
+  geocodeAddress,
+} from '../../api/deliveryApi';
 import Button from '../../components/Button';
 import MapPicker from '../../components/MapPicker';
 import { formatPrice } from '../../utils/format';
@@ -58,6 +63,11 @@ const CartPage = () => {
   const [apiError, setApiError] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [mapCoords, setMapCoords] = useState(null);
+  const [restaurantCoords, setRestaurantCoords] = useState(null);
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
+  // { distanceKm, durationMin } | null
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+  const [deliveryError, setDeliveryError] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -72,6 +82,27 @@ const CartPage = () => {
       active = false;
     };
   }, []);
+
+  // Geocodowanie adresu restauracji (raz, cachowane w restaurantCoords)
+  useEffect(() => {
+    let active = true;
+    if (isEmpty || !restaurantId) return undefined;
+    getRestaurantById(restaurantId)
+      .then((res) => {
+        const r = res.data;
+        if (r?.street && r?.city) {
+          return geocodeAddress(r.street, r.house_number || '', r.city);
+        }
+        return null;
+      })
+      .then((coords) => {
+        if (active && coords) setRestaurantCoords(coords);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [isEmpty, restaurantId]);
 
   const addressErrors = useMemo(() => {
     if (hasSavedAddresses) return {};
@@ -112,6 +143,54 @@ const CartPage = () => {
         : null
     );
   };
+
+  const calcDelivery = useCallback(async () => {
+    if (!restaurantCoords) return;
+
+    let clientCoords = null;
+
+    if (mapCoords?.lat && mapCoords?.lon) {
+      clientCoords = { lat: mapCoords.lat, lon: mapCoords.lon };
+    } else if (addressForm.street.trim() && addressForm.city.trim()) {
+      setDeliveryLoading(true);
+      try {
+        clientCoords = await geocodeAddress(
+          addressForm.street,
+          addressForm.houseNumber || '',
+          addressForm.city
+        );
+      } catch {
+        setDeliveryLoading(false);
+        return;
+      }
+    }
+
+    if (!clientCoords) {
+      setDeliveryLoading(false);
+      return;
+    }
+
+    setDeliveryLoading(true);
+    setDeliveryError(null);
+    try {
+      const info = await calculateDeliveryRoute(
+        restaurantCoords.lon,
+        restaurantCoords.lat,
+        clientCoords.lon,
+        clientCoords.lat
+      );
+      setDeliveryInfo(info);
+    } catch {
+      setDeliveryError('Nie udało się obliczyć trasy dostawy.');
+      setDeliveryInfo(null);
+    } finally {
+      setDeliveryLoading(false);
+    }
+  }, [restaurantCoords, mapCoords, addressForm]);
+
+  useEffect(() => {
+    if (mapCoords) calcDelivery();
+  }, [mapCoords, restaurantCoords, calcDelivery]);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -377,6 +456,21 @@ const CartPage = () => {
                 />
                 {addressErrors.city && <span className={styles.error}>{addressErrors.city}</span>}
               </div>
+
+              {!mapCoords &&
+                addressForm.street.trim() &&
+                addressForm.city.trim() && (
+                  <button
+                    type="button"
+                    className={styles.calcRouteButton}
+                    onClick={calcDelivery}
+                    disabled={deliveryLoading}
+                  >
+                    {deliveryLoading
+                      ? 'Obliczanie...'
+                      : 'Oblicz trasę dostawy'}
+                  </button>
+                )}
             </>
           )}
 
@@ -385,6 +479,27 @@ const CartPage = () => {
               onAddressSelected={handleMapAddressSelected}
               onClose={() => setShowMap(false)}
             />
+          )}
+
+          {deliveryLoading && (
+            <p className={styles.deliveryLoading}>Obliczanie trasy...</p>
+          )}
+
+          {deliveryInfo && !deliveryLoading && (
+            <div className={styles.deliveryInfo}>
+              <span>Odległość dostawy</span>
+              <span className={styles.deliveryValue}>
+                {deliveryInfo.distanceKm} km
+              </span>
+              <span>Szacowany czas dowozu</span>
+              <span className={styles.deliveryValue}>
+                ok. {deliveryInfo.durationMin} min
+              </span>
+            </div>
+          )}
+
+          {deliveryError && (
+            <p className={styles.deliveryError}>{deliveryError}</p>
           )}
 
           {apiError && <div className={styles.apiError}>{apiError}</div>}
