@@ -143,23 +143,34 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+  align-items: center;
 }
 
 .cancelButton {
-  background: #fff;
-  color: #b71c1c;
-  border: 1px solid #b71c1c;
-  padding: 8px 16px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  min-width: 120px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  background: #fff;
+  color: #dc2626;
+  border: 1.5px solid #fca5a5;
+  transition: background 0.12s ease;
+  white-space: nowrap;
 }
 
 .cancelButton:hover:not(:disabled) {
-  background: #fdecea;
+  background: #fef2f2;
+  border-color: #dc2626;
 }
 
 .cancelButton:disabled {
@@ -194,18 +205,26 @@
 }
 
 .estimateInput {
-  width: 90px;
-  padding: 7px 10px;
-  border: 1px solid #d1d5db;
+  width: 110px;
+  padding: 9px 10px;
+  border: 1.5px solid #d1d5db;
   border-radius: 6px;
   font-size: 14px;
   text-align: center;
+  color: #222;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .estimateInput:focus {
-  outline: none;
   border-color: #ef6c00;
-  box-shadow: 0 0 0 2px rgba(239,108,0,0.12);
+  box-shadow: 0 0 0 2px rgba(239, 108, 0, 0.12);
+}
+
+.estimateInput::placeholder {
+  color: #aaa;
+  font-size: 12px;
 }
 
 .estimateUnit {
@@ -215,7 +234,7 @@
 }
 
 .estimatedTime {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   font-size: 13px;
   font-weight: 600;
   color: #ef6c00;

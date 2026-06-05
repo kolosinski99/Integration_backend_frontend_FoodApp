@@ -120,21 +120,23 @@ const OwnerDashboardPage = () => {
           <h2 className={styles.name}>{restaurant.restaurant_name}</h2>
           <p className={styles.address}>{buildAddressLine(restaurant)}</p>
           <p className={styles.description}>{restaurant.description}</p>
-          <Button onClick={() => navigate('/owner/restaurant/edit')}>
-            Edytuj dane restauracji
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/owner/orders')}
-          >
-            Zamówienia
-            {activeOrderCount > 0 && (
-              <span className={styles.orderBadge}>{activeOrderCount}</span>
-            )}
-          </Button>
-          <Button variant="secondary" onClick={() => navigate('/owner/report')}>
-            Raport sprzedaży
-          </Button>
+          <div className={styles.cardActions}>
+            <Button onClick={() => navigate('/owner/restaurant/edit')}>
+              Edytuj dane restauracji
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => navigate('/owner/orders')}
+            >
+              Zamówienia
+              {activeOrderCount > 0 && (
+                <span className={styles.orderBadge}>{activeOrderCount}</span>
+              )}
+            </Button>
+            <Button variant="secondary" onClick={() => navigate('/owner/report')}>
+              Raport sprzedaży
+            </Button>
+          </div>
         </div>
       )}
     </div>

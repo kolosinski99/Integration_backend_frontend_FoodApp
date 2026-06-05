@@ -94,3 +94,18 @@
   margin-left: 8px;
   padding: 0 5px;
 }
+
+/* Wrapper na grupę przycisków w karcie restauracji */
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Pełna szerokość przycisku głównego na mobile */
+@media (max-width: 480px) {
+  .cardActions {
+    flex-direction: column;
+  }
+}

@@ -2,36 +2,55 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 0 24px;
+  height: 56px;
   background: #fff;
   border-bottom: 1px solid #eaeaea;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .logo {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   color: #ef6c00;
+  letter-spacing: -0.3px;
+  flex-shrink: 0;
 }
 
+.logo:hover {
+  text-decoration: none;
+  color: #d65f00;
+}
+
+/* Prawa strona — linki + profil + wyloguj */
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
 }
 
+/* Sekcja nawigacyjnych linków */
 .links {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-right: 8px;
+  gap: 2px;
+  margin-right: 12px;
+  padding-right: 12px;
+  border-right: 1px solid #eaeaea;
 }
 
 .navLink {
-  color: #444;
+  color: #555;
   font-size: 14px;
-  padding: 6px 10px;
-  border-radius: 4px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
   text-decoration: none;
+  transition: background 0.12s ease, color 0.12s ease;
+  white-space: nowrap;
 }
 
 .navLink:hover {
@@ -43,16 +62,17 @@
 .navLinkActive {
   background: #fff5eb;
   color: #ef6c00;
-  font-weight: 600;
+  font-weight: 700;
 }
 
+/* Badge na ikonie koszyka */
 .cartBadge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  margin-left: 6px;
+  margin-left: 5px;
   padding: 0 5px;
   background: #ef6c00;
   color: #fff;
@@ -60,20 +80,22 @@
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
+  vertical-align: middle;
 }
 
+/* Link "Działaj z nami" */
 .partnerLink {
   display: inline-block;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border: 2px solid #ef6c00;
   border-radius: 999px;
   color: #ef6c00;
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   transition: background 0.15s ease, color 0.15s ease;
+  margin-right: 8px;
 }
 
 .partnerLink:hover {
@@ -87,13 +109,22 @@
   color: #fff;
 }
 
+/* Powitanie / link do profilu */
 .greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: #444;
-  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   text-decoration: none;
-  padding: 6px 8px;
-  border-radius: 4px;
-  transition: color 0.15s ease, background 0.15s ease;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.12s ease, background 0.12s ease;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .greeting:hover {
@@ -104,26 +135,60 @@
 
 .roleLabel {
   color: #ef6c00;
-  font-weight: 600;
-  margin-right: 4px;
+  font-weight: 700;
+  font-size: 13px;
 }
 
-.greeting em {
-  color: #888;
-  font-style: normal;
-  font-size: 12px;
-}
-
+/* Przycisk wylogowania */
 .button {
-  background: #ef6c00;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
+  background: transparent;
+  color: #666;
+  border: 1px solid #d1d5db;
+  padding: 6px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 6px;
+  transition: background 0.12s ease, color 0.12s ease,
+              border-color 0.12s ease;
+  white-space: nowrap;
 }
 
 .button:hover {
-  background: #d65f00;
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+/* Responsywność */
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 14px;
+    height: 52px;
+  }
+
+  .links {
+    gap: 0;
+    margin-right: 6px;
+    padding-right: 6px;
+  }
+
+  .navLink {
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+
+  .greeting {
+    max-width: 100px;
+    font-size: 13px;
+  }
+
+  .roleLabel {
+    display: none;
+  }
+
+  .button {
+    padding: 5px 10px;
+  }
 }

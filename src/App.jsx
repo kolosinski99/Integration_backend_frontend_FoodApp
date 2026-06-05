@@ -7,7 +7,11 @@ function App() {
   return (
     <CartProvider>
       <Navbar />
-      <main style={{ maxWidth: 960, margin: '0 auto', padding: '24px 16px' }}>
+      <main style={{
+        maxWidth: 980,
+        margin: '0 auto',
+        padding: '32px 20px 60px',
+      }}>
         <AppRoutes />
       </main>
     </CartProvider>

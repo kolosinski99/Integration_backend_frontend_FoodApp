@@ -118,6 +118,11 @@
   border: 1px solid #eaeaea;
   border-radius: 8px;
   overflow: hidden;
+  transition: box-shadow 0.12s ease;
+}
+
+.orderCard:hover {
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.08));
 }
 
 .orderHeader {
@@ -139,7 +144,7 @@
 .orderId {
   font-size: 13px;
   font-weight: 700;
-  color: #666;
+  color: #9ca3af;
 }
 
 .orderRestaurant {
@@ -157,7 +162,7 @@
 
 .orderDate {
   font-size: 13px;
-  color: #888;
+  color: #9ca3af;
 }
 
 .orderTotal {
@@ -173,7 +178,13 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.12s ease;
+}
+
+.expandBtn:hover {
+  background: #fff5eb;
 }
 
 .orderDetails {
@@ -195,7 +206,8 @@
   display: flex;
   justify-content: space-between;
   font-size: 13px;
-  color: #444;
+  color: #555;
+  padding: 2px 0;
 }
 
 .noItems {
@@ -217,22 +229,34 @@
 }
 
 .actions {
-  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .revertButton {
-  background: #fff;
-  color: #b71c1c;
-  border: 1px solid #b71c1c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
+  min-width: 90px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  background: #fff;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  transition: background 0.12s ease, border-color 0.12s ease,
+              color 0.12s ease;
+  white-space: nowrap;
 }
 
 .revertButton:hover:not(:disabled) {
-  background: #fdecea;
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
 }
 
 .revertButton:disabled {

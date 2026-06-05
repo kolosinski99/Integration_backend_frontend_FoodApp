@@ -77,12 +77,14 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  padding: 6px 0;
+  padding: 6px 10px;
   text-align: left;
+  border-radius: 4px;
+  transition: background 0.12s ease;
 }
 
 .expandButton:hover {
-  text-decoration: underline;
+  background: #fff5eb;
 }
 
 .items {
